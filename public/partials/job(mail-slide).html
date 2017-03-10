@@ -1,0 +1,647 @@
+<div id="mailslide" class="col-md-12 col-lg-12 dash-left slidediv" ng-init='vm.inbox={paginate:{}}'>
+    <div class="mail-box">
+        <aside class="lg-side">
+            <div class="inbox-head">
+                <h3>{{vm.inbox.currentView}}</h3>
+                <form action="#" class="pull-right position">
+                    <div class="input-append">
+                        <input  ng-model="vm.searchText" class="sr-input" placeholder="Search Mail" type="text">
+                        <button ng-click="vm.inbox.search=[];vm.fetchMails('search')" class="btn sr-btn" type="button"><i class="fa fa-search"></i></button>
+                    </div>
+                </form>
+            </div>
+            <div class="inbox-body">
+                <div class="mail-option text-left">
+                    <div class="chk-all">
+                        <input ng-model="vm.inbox.checkboxMaster" class="mail-checkbox mail-group-checkbox" type="checkbox">
+                        <div class="btn-group">
+                            <a data-toggle="dropdown" href="#" class="btn mini all" aria-expanded="false">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="btn-group hidden-phone">
+                        <a data-toggle="dropdown" href="#" class="btn mini blue" aria-expanded="false">
+                                                    More
+                                                    <i class="fa fa-angle-down "></i>
+                                                </a>
+                        <ul class="dropdown-menu">
+                            <li ng-click='vm.modifyEmail("UNREAD")'><a href="#"><i class="fa fa-pencil"></i> Mark as Read</a></li>
+                            <li ng-click='vm.modifyEmail("SPAM")'><a href="#"><i class="fa fa-ban"></i> Spam</a></li>
+                            <li class="divider"></li>
+                            <li ng-click='vm.modifyEmail("TRASH")'><a href="#"><i class="fa fa-trash-o"></i> Delete</a></li>
+                        </ul>
+                    </div>
+                    <ul class="unstyled inbox-pagination">
+                        <li><span>1-50 of {{vm.inbox.totalCounter}}</span></li>
+                        <li>
+                            <a class="np-btn" ng-click="vm.fetchNext('PREVIOUS')" href="#"><i class="fa fa-angle-left  pagination-left"></i></a>
+                        </li>
+                        <li>
+                            <a class="np-btn" ng-click="vm.fetchNext('NEXT')" href="#"><i class="fa fa-angle-right pagination-right"></i></a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-tabs nav-line mt10">
+                        <li class="active">
+                            <a href="#allmail" data-toggle="tab" aria-expanded="true">
+                                <strong>All</strong></a>
+                        </li>
+                        <li ng-click="vm.inbox.candidate=[];vm.fetchMails('candidate')" >
+                            <a href="#candidatemail" data-toggle="tab" aria-expanded="true">
+                                <strong>Candidate</strong></a>
+                        </li>
+                        <li ng-click="vm.inbox.client=[];vm.fetchMails('client')" >
+                            <a href="#clientmail" data-toggle="tab" aria-expanded="true">
+                                <strong>Client</strong></a>
+                        </li>
+                        <li ng-click="vm.inbox.UNREAD=[];vm.fetchMails('UNREAD')">
+                            <a href="#unreadmail" data-toggle="tab" aria-expanded="true">
+                                <strong>Unread</strong></a>
+                        </li>
+                    </ul>
+                </div>
+                <table class="table table-inbox table-hover inboxtable">
+                    <tbody>
+                        <tr ng-repeat="message in vm.inbox[vm.inbox.currentView]" ng-click="vm.readMail(message)" class="toggleinbox" ng-class="message.isRead ? '' : 'unread'" >
+                            <td class="inbox-small-cells">
+                                <input ng-checked="vm.inbox.checkboxMaster" id="{{message.id}}" class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i ng-click="vm.modifyEmail('STARRED', message)" ng-class="message.isStarred ? 'inbox-started' : ''" class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">{{vm.inbox.currentView == "DRAFT" ? message.to : message.from}}</td>
+                            <td class="view-message">{{message.subject}}</td>
+                            <td class="view-message inbox-small-cells"><i ng-if='message.hasAttachment' class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">{{message.date | date:'short'}}</td>
+                        </tr>
+                        <!-- <tr class="unread toggleinbox">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message  dont-show">PHPClass</td>
+                            <td class="view-message ">Added a new class: Login Class Fast Site</td>
+                            <td class="view-message  inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message  text-right">9:27 AM</td>
+                        </tr>
+                        <tr class="unread">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Google Webmaster </td>
+                            <td class="view-message">Improve the search presence of WebSite</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">March 15</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">JW Player</td>
+                            <td class="view-message">Last Chance: Upgrade to Pro for </td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">March 15</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Tim Reid, S P N</td>
+                            <td class="view-message">Boost Your Website Traffic</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">April 01</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star inbox-started"></i></td>
+                            <td class="view-message dont-show">Freelancer.com <span class="label label-danger pull-right">urgent</span></td>
+                            <td class="view-message">Stop wasting your visitors </td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">May 23</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star inbox-started"></i></td>
+                            <td class="view-message dont-show">WOW Slider </td>
+                            <td class="view-message">New WOW Slider v7.8 - 67% off</td>
+                            <td class="view-message inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">March 14</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star inbox-started"></i></td>
+                            <td class="view-message dont-show">LinkedIn Pulse</td>
+                            <td class="view-message">The One Sign Your Co-Worker Will Stab</td>
+                            <td class="view-message inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">Feb 19</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Drupal Community<span class="label label-success pull-right">megazine</span></td>
+                            <td class="view-message view-message">Welcome to the Drupal Community</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">March 04</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Facebook</td>
+                            <td class="view-message view-message">Somebody requested a new password </td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">June 13</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Skype <span class="label label-info pull-right">family</span></td>
+                            <td class="view-message view-message">Password successfully changed</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">March 24</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star inbox-started"></i></td>
+                            <td class="view-message dont-show">Google+</td>
+                            <td class="view-message">alireza, do you know</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">March 09</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star inbox-started"></i></td>
+                            <td class="dont-show">Zoosk </td>
+                            <td class="view-message">7 new singles we think you'll like</td>
+                            <td class="view-message inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">May 14</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">LinkedIn </td>
+                            <td class="view-message">Alireza: Nokia Networks, System Group and </td>
+                            <td class="view-message inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">February 25</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="dont-show">Facebook</td>
+                            <td class="view-message view-message">Your account was recently logged into</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">March 14</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Twitter</td>
+                            <td class="view-message">Your Twitter password has been changed</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">April 07</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">InternetSeer Website Monitoring</td>
+                            <td class="view-message">http://golddesigner.org/ Performance Report</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">July 14</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star inbox-started"></i></td>
+                            <td class="view-message dont-show">AddMe.com</td>
+                            <td class="view-message">Submit Your Website to the AddMe Business Directory</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">August 10</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Terri Rexer, S P N</td>
+                            <td class="view-message view-message">Forget Google AdWords: Un-Limited Clicks fo</td>
+                            <td class="view-message inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">April 14</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Bertina </td>
+                            <td class="view-message">IMPORTANT: Don't lose your domains!</td>
+                            <td class="view-message inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">June 16</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star inbox-started"></i></td>
+                            <td class="view-message dont-show">Laura Gaffin, S P N </td>
+                            <td class="view-message">Your Website On Google (Higher Rankings Are Better)</td>
+                            <td class="view-message inbox-small-cells"></td>
+                            <td class="view-message text-right">August 10</td>
+                        </tr>
+                        <tr class="">
+                            <td class="inbox-small-cells">
+                                <input class="mail-checkbox" type="checkbox">
+                            </td>
+                            <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                            <td class="view-message dont-show">Facebook</td>
+                            <td class="view-message view-message">Alireza Zare Login faild</td>
+                            <td class="view-message inbox-small-cells"><i class="fa fa-paperclip"></i></td>
+                            <td class="view-message text-right">feb 14</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+                <div class="col-sm-12 openinbox" style="display:none">
+                    <h2 id="folder-title" class="folder-title">{{vm.inbox.currentView}} <small></small></h2>
+                    <div id="mailbox-content" class="mailbox-content">
+                        <div id="email-view" class="email-view">
+                            <span class="pull-right"><a href="#" class="print"><i class="fa fa-print fa-lg"></i></a></span>
+                            <h4>{{vm.inbox.message.subject}}</h4>
+                            <hr>
+                            <div class="email-details clearfix">
+                               <!--  <img width="40" src="images/photos/loggeduser.png" alt="Philip Horbacheuski" class="pull-left"> -->
+                                <div class="email-details-content">
+                                    <div class="pull-left" style="margin-left:10px;">
+                                        <!-- <strong>Philip Horbacheuski</strong> -->
+                                        <span class="email">{{vm.inbox.message.from}}</span>
+                                        <span class="receiver">{{vm.inbox.message.to}}</span>
+                                    </div>
+                                    <div class="email-actions pull-right">
+                                        <div class="btn-group">
+                                            <button id="email-opened-reply" class="reply_btn btn btn-sm btn-transparent">
+                                                <i class="fa fa-reply"></i> Reply
+                                            </button>
+                                            <button class="btn btn-sm btn-transparent dropdown-toggle" data-toggle="dropdown">
+                                                <i class="fa fa-angle-down"></i>
+                                            </button>
+                                            <ul class="dropdown-menu pull-right">
+                                                <li><a href="#"><i class="fa fa-reply reply-btn"></i> Reply</a></li>
+                                                <li><a href="#"><i class="fa fa-arrow-right reply-btn"></i> Forward</a></li>
+                                                <li><a href="#"><i class="fa fa-print"></i> Print</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="#"><i class="fa fa-ban"></i> Spam</a></li>
+                                                <li><a href="#"><i class="fa fa-trash"></i> Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="email-date pull-right">
+                                        <i class="fa fa-paperclip"></i> Dec 12 (13:39)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="email-body" ng-bind-html="vm.email.content">
+                            </div>
+                            <!-- <div class="email-attachments">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <hr>
+                                        <p class="details"><strong>2 attachments</strong> &nbsp;-&nbsp; <a href="#">Download all attachments</a> &nbsp;&nbsp;&nbsp;
+                                            <a href="#">View all Images</a></p>
+                                        <section class="attachment">
+                                            <div class="pull-left mr5 overflow_hide">
+                                                <img src="images/doc.png" width="100" alt="" class="">
+                                                <h5 class="title">some-cool-image1.jpg</h5>
+                                            </div>
+                                            <div class="pull-left mr5 overflow_hide">
+                                                <img src="images/doc.png" width="100" alt="" class="">
+                                                <h5 class="title">some-cool-image1.jpg</h5>
+                                            </div>
+                                            <div class="pull-left mr5 overflow_hide">
+                                                <img src="images/doc.png" width="100" alt="" class="">
+                                                <h5 class="title">some-cool-image1.jpg</h5>
+                                            </div>
+                                            <div class="clear"></div>
+                                            <p class="details">
+                                                61K &nbsp;&nbsp;
+                                                <a href="#">View</a> &nbsp;&nbsp;
+                                                <a href="#">Download</a>
+                                            </p>
+                                        </section>
+                                        <section class="attachment">
+                                            <div class="pull-left mr5 overflow_hide">
+                                                <img src="images/doc.png" width="100" alt="" class="">
+                                                <h5 class="title">some-cool-image1.jpg</h5>
+                                            </div>
+                                            <p class="details">
+                                                333K &nbsp;&nbsp;
+                                                <a href="#">View</a> &nbsp;&nbsp;
+                                                <a href="#">Download</a>
+                                            </p>
+                                        </section>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div id="summernote1">
+                                <div class="email-body">
+                                    <p>
+                                        <strong>---------- Forwarded message ---------- </strong>
+                                        <br>
+                                        <strong>From: <span>Binit Biswas</span> </strong>
+                                        <br>
+                                        <strong>Date: <span>Mon, Jun 13, 2016 at 10:08 PM</span></strong>
+                                        <br>
+                                        <strong>Subject: <span>Lorem ipsum dolor sit amet</span></strong>
+                                        <br>
+                                        <strong>From: <span>Lorem ipsum</span> </strong>
+                                    </p>
+                                </div>
+                                <div class="email-details clearfix">
+                                    <img width="40" src="images/photos/loggeduser.png" alt="Philip Horbacheuski" class="pull-left">
+                                    <div class="email-details-content">
+                                        <div class="pull-left" style="margin-left:10px;">
+                                            <strong>Philip Horbacheuski</strong>
+                                            <span class="email">&lt;philip.horbacheuski@example.com&gt;</span>
+                                            <span class="receiver">to Wrapbootstrap</span>
+                                        </div>
+                                        <div class="email-date pull-right">
+                                            <i class="fa fa-paperclip"></i> Dec 12 (13:39)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="email-body">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nisl magna, aliquet at condimentum quis, volutpat et lorem. Nunc augue ante, varius id massa ut, accumsan pretium arcu. Donec mattis, ante a consectetur blandit, mi sapien consectetur massa, sit amet molestie metus lacus in ante.</p>
+                                    <p>Aliquam porta, odio non finibus dictum, augue ligula pretium nunc, et faucibus metus diam ac nunc. Cras commodo ipsum dolor, id tristique tellus semper sit amet. Vestibulum nisl elit, sodales non fringilla et, lacinia ut ipsum. Suspendisse potenti. Cras volutpat mollis ante. </p>
+                                    <p>All the best,</p>
+                                    <p><strong>Vitaut the Great, CEO, </strong>
+                                        <br><strong>Fooby Inc.</strong>
+                                    </p>
+                                </div>
+                                <div class="email-attachments">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <hr>
+                                            <p class="details"><strong>2 attachments</strong> &nbsp;-&nbsp; <a href="#">Download all attachments</a> &nbsp;&nbsp;&nbsp;
+                                                <a href="#">View all Images</a></p>
+                                            <section class="attachment">
+                                                <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                <div class="clear"></div>
+                                                <h5 class="title">some-cool-image1.jpg</h5>
+                                                <p class="details">
+                                                    61K &nbsp;&nbsp;
+                                                    <a href="#">View</a> &nbsp;&nbsp;
+                                                    <a href="#">Download</a>
+                                                </p>
+                                            </section>
+                                            <section class="attachment">
+                                                <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                <h5 class="title">some-cool-image2.jpg</h5>
+                                                <p class="details">
+                                                    333K &nbsp;&nbsp;
+                                                    <a href="#">View</a> &nbsp;&nbsp;
+                                                    <a href="#">Download</a>
+                                                </p>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="panel-group hideafter" id="accordion2">
+                                <!-- <div class="panel panel-default">
+                                    <div class="">
+                                        <h4 class="panel-title">
+                                                                   
+                                                                        <img width="40" src="images/photos/loggeduser.png" alt="Philip Horbacheuski" class="pull-left mt5">
+                                                                         <a class="collapsed mail_title" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2">
+                                                                        <div class="pull-left" style="margin-left:10px;">
+                                                                            <strong><h4 class="mail_headtitle">Lorem ipsum dolor <span class="mail_ids">abc@gmail.com</span></h4></strong>
+                                        <span class="receiver receiver1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+                                    </div>
+                                    </a>
+                                    <br>
+                                    <br>
+                                    <div class="btn-group pull-left mail_sender_details">
+                                        <button id="email-opened-reply" class="btn btn-sm btn-transparent fa_replybtn">
+                                            To: me
+                                        </button>
+                                        <button class="btn btn-sm btn-transparent dropdown-toggle fa_replybtn2" data-toggle="dropdown">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu pull-right open_reply2" style="left: 0;right: auto;">
+                                            <li><a href="#"><strong>From :</strong> <span>abc@gmail.com</span></a></li>
+                                            <li><a href="#"><strong>To :</strong> <span>abc@gmail.com</span></a></li>
+                                            <li><a href="#"><strong>Date :</strong> <span>Mon, Dec 12, 2016 at 6:29 PM</span></a></li>
+                                            <li><a href="#"><strong>subject:</strong> <span>Lorem ipsum dolor sit amet</span></a></li>
+                                            <li><a href="#"><strong>mailed-by:</strong> <span>consecteturelit.com</span></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="email-actions pull-right align_rightcontent">
+                                        <div class="btn-group right_replybtn">
+                                            <button id="email-opened-reply" class="btn btn-sm btn-transparent fa_replybtn">
+                                                <i class="fa fa-reply"></i> Reply
+                                            </button>
+                                            <button class="btn btn-sm btn-transparent dropdown-toggle fa_replybtn1" data-toggle="dropdown">
+                                                <i class="fa fa-angle-down"></i>
+                                            </button>
+                                            <ul class="dropdown-menu pull-right open_reply">
+                                                <li><a href="#"><i class="fa fa-reply reply-btn"></i> Reply</a></li>
+                                                <li><a href="#"><i class="fa fa-arrow-right reply-btn"></i> Forward</a></li>
+                                                <li><a href="#"><i class="fa fa-print"></i> Print</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="#"><i class="fa fa-ban"></i> Spam</a></li>
+                                                <li><a href="#"><i class="fa fa-trash"></i> Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="email-date pull-right align_rightcontent">
+                                        <i class="fa fa-paperclip"></i> Dec 12 (13:39)
+                                    </div>
+                                    <div class="clear"></div>
+                                    </h4>
+                                </div> -->
+                                <div id="collapseOne2" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div id="">
+                                            <div class="email-body">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nisl magna, aliquet at condimentum quis, volutpat et lorem. Nunc augue ante, varius id massa ut, accumsan pretium arcu. Donec mattis, ante a consectetur blandit, mi sapien consectetur massa, sit amet molestie metus lacus in ante.</p>
+                                                <p>Aliquam porta, odio non finibus dictum, augue ligula pretium nunc, et faucibus metus diam ac nunc. Cras commodo ipsum dolor, id tristique tellus semper sit amet. Vestibulum nisl elit, sodales non fringilla et, lacinia ut ipsum. Suspendisse potenti. Cras volutpat mollis ante. </p>
+                                                <p>All the best,</p>
+                                                <p><strong>Vitaut the Great, CEO, </strong>
+                                                    <br><strong>Fooby Inc.</strong>
+                                                </p>
+                                            </div>
+                                            <!-- <div class="email-attachments">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <hr>
+                                                        <p class="details"><strong>2 attachments</strong> &nbsp;-&nbsp; <a href="#">Download all attachments</a> &nbsp;&nbsp;&nbsp;
+                                                            <a href="#">View all Images</a></p>
+                                                        <section class="attachment">
+                                                            <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                            <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                            <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                            <div class="clear"></div>
+                                                            <h5 class="title">some-cool-image1.jpg</h5>
+                                                            <p class="details">
+                                                                61K &nbsp;&nbsp;
+                                                                <a href="#">View</a> &nbsp;&nbsp;
+                                                                <a href="#">Download</a>
+                                                            </p>
+                                                        </section>
+                                                        <section class="attachment">
+                                                            <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                            <h5 class="title">some-cool-image2.jpg</h5>
+                                                            <p class="details">
+                                                                333K &nbsp;&nbsp;
+                                                                <a href="#">View</a> &nbsp;&nbsp;
+                                                                <a href="#">Download</a>
+                                                            </p>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <<!-- div class="">
+                                    <h4 class="panel-title">
+                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion2" href="#collapseTwo2">
+                                                                        <img width="40" src="images/photos/loggeduser.png" alt="Philip Horbacheuski" class="pull-left mt5">
+                                                                        <div class="pull-left" style="margin-left:10px;">
+                                                                            <strong><h4 class="mail_headtitle">Lorem ipsum dolor</h4></strong>
+                                    <span class="receiver">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span>
+                                </div>
+                                <div class="email-date pull-right">
+                                    <i class="fa fa-paperclip"></i> Dec 12 (13:39)
+                                </div>
+                                <div class="clear"></div>
+                                </a>
+                                </h4>
+                            </div> -->
+                            <!-- <div id="collapseTwo2" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    One of the main advantages of the download sales is the immediate delivery of the product at any time of the day. So, once the payment is accepted, it is a matter of minutes till you get the e-mails. Even better: the download links and the License number(s) are also shown in your browser right after the transaction, so there is even no need to wait.
+                                </div>
+                            </div> -->
+                        </div>
+                        <div class="panel panel-default">
+                           <!--  <div class="">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion2" href="#collapseThree2">
+                                    <img width="40" src="images/photos/loggeduser.png" alt="Philip Horbacheuski" class="pull-left mt5">
+                                    <div class="pull-left" style="margin-left:10px;">
+                                                                            <strong><h4 class="mail_headtitle">Lorem ipsum dolor</h4></strong>
+                                <span class="receiver">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span>
+                            </div>
+                            <div class="email-date pull-right">
+                                <i class="fa fa-paperclip"></i> Dec 12 (13:39)
+                            </div>
+                            <div class="clear"></div>
+                            </a>
+                            </h4>
+                        </div> -->
+                       <!--  <div id="collapseThree2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <p>The payments can be done in 15 different currencies. However, if you prefer to pay in US Dollars, British Pounds or any currency other than Euro, please consider that various exchange fees will be applied. For currencies other than USD or GBP, for example, the charge applied by ShareIt can be as much as 9 %.</p>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<script>
+// $('#Inbox').click(function() {
+//     $("#mailslide").toggle("slide");
+// });
+$(document).ready(function() {
+
+    'use strict';
+
+    // HTML5 WYSIWYG Editor
+    $('#wysiwyg').wysihtml5({
+        toolbar: {
+            fa: true
+        }
+    });
+
+    // Summernote
+    $('#summernote').summernote({
+        height: 300
+    });
+
+    // Summernote
+    $('#summernote1').summernote({
+        height: 300
+    });
+
+});
+</script>
+<script type="text/javascript">
+//<![CDATA[
+$(function() {
+    $('.toggleinbox').click(function() {
+        $('.openinbox').toggle();
+        $('.inboxtable').hide();
+    });
+});
+$(function() {
+    //$('#summernote1').hide();
+    $('.note-editor').hide();
+    $('.reply_btn').click(function() {
+        //$('#summernote1').toggle();
+        $('.note-editor').toggle();
+    });
+});
+$(function() {
+    $('.fa_replybtn1').click(function() {
+        $('.open_reply').toggle();
+    });
+});
+$(function() {
+    $('.fa_replybtn2').click(function() {
+        $('.open_reply2').toggle();
+    });
+});
+$(function() {
+    $('.mail_ids').hide();
+    $('.mail_sender_details').hide();
+    $('.right_replybtn').hide();
+    $('.mail_title').click(function() {
+        $('.mail_ids').toggle();
+        $('.receiver1').toggle();
+        $('.mail_sender_details').toggle();
+        $('.right_replybtn').toggle();
+    });
+});
+</script>

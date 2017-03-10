@@ -15064,7 +15064,7 @@ li.whitetext:before {
 .slidediv {
     display: none;
     position: absolute;
-    z-index: 99999999;
+    z-index: 999999;
 }
 
 .leftdiv {

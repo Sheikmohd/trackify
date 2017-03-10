@@ -4,7 +4,7 @@
 
         <ul class="nav nav-tabs nav-justified nav-sidebar nobottom">
             <li class="tooltips active" data-toggle="tooltip" title="Jobs"><a data-toggle="tab" data-target="#mainmenu"><i class="fa fa-briefcase" aria-hidden="true"></i> Jobs</a></li>
-            <li class="tooltips unread" data-toggle="tooltip" title="Mail"><a data-toggle="tab" data-target="#mailcontent1"><i class="fa fa-envelope" aria-hidden="true"></i> Mail</a></li>
+            <li ng-click="vm.fetchMailCount()" class="tooltips unread" data-toggle="tooltip" title="Mail"><a data-toggle="tab" data-target="#mailcontent1"><i class="fa fa-envelope" aria-hidden="true"></i> Mail</a></li>
             <li class="tooltips unread" data-toggle="tooltip" title="Chat"><a data-toggle="tab" data-target="#contactmenu"><i class="fa fa-comments-o" aria-hidden="true"></i> Chat</a></li>
         </ul>
 
@@ -91,30 +91,27 @@
 
 
                         <div class="inbox-body">
-                            <a class="button8 btn btn-compose noleftmargin" id="compose_btn">
-                                Compose
+                            <a ng-click="vm.sayHello()" class="button8 btn btn-compose noleftmargin" id="compose_btn">Compose
                             </a>
+                            <span ng-include src="'partials/job-new-resume(send-mails-compose).html'"></span>
                         </div>
                         <ul class="inbox-nav inbox-divider">
-                            <li>
-                                <a href="javascript:;" id="Inbox"><i class="fa fa-inbox"></i> Inbox <span class="label label-danger pull-right">2</span></a>
-
+                            <li ng-click="vm.inbox.INBOX=[];vm.fetchMails('INBOX')"  data-target="#mailslide">
+                                <a href="javascript:;" id="Inbox"><i class="fa fa-inbox"></i> Inbox <span class="label label-danger pull-right">{{vm.inbox.inboxCounter}}</span></a>                                
                             </li>
-                            <li>
+                            <li ng-click="vm.inbox.SENT=[];vm.fetchMails('SENT')" data-target="#mailslide">
                                 <a href="#"><i class="fa fa-envelope-o"></i> Sent Mail</a>
                             </li>
-                            <li>
+                            <li ng-click="vm.inbox.IMPORTANT=[];vm.fetchMails('IMPORTANT')" data-target="#mailslide">
                                 <a href="#"><i class="fa fa-bookmark-o"></i> Important</a>
                             </li>
-                            <li>
-                                <a href="#"><i class=" fa fa-external-link"></i> Drafts <span class="label label-info pull-right">30</span></a>
+                            <li ng-click="vm.inbox.DRAFT=[];vm.fetchMails('DRAFT')" data-target="#mailslide">
+                                <a href="#"><i class=" fa fa-external-link"></i> Drafts <span class="label label-info pull-right">{{vm.inbox.draftsCounter}}</span></a>
                             </li>
-                            <li>
+                            <li ng-click="vm.inbox.TRASH=[];vm.fetchMails('TRASH')" data-target="#mailslide">
                                 <a href="#"><i class=" fa fa-trash-o"></i> Trash</a>
                             </li>
                         </ul>
-
-
                     </aside>
                 </div>
             </div>

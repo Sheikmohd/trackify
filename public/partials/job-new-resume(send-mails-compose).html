@@ -1,0 +1,175 @@
+<div class="modal" id="composeMail">
+    <div id="dialog8">
+        <form role="form" class="form-horizontal" ng-init="vm.email={}">
+            <div class="form-group">
+                <div class="col-md-6">
+                    <select ng-change="vm.fetchEmailTemplates()" ng-model="vm.email.template" id="Choose_Template" class="form-control" style="width: 100%" data-placeholder="Choose Template">
+                        <option value=""></option>
+                        <option value="Option1">Tarun</option>
+                        <option value="Option1">Option2</option>
+                        <option value="Option1">Option3</option>
+                        <option value="Option1">Option4</option>
+                        <option value="Option1">Option5</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select id="mail_From" ng-model="vm.email.from" class="form-control" style="width: 100%" data-placeholder="From">
+                        <option value=""></option>
+                        <option value="Option1">Option1</option>
+                        <option value="Option1">Option2</option>
+                        <option value="Option1">Option3</option>
+                        <option value="Option1">Option4</option>
+                        <option value="Option1">Option5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <select id="mail_to" class="form-control" ng-model="vm.email.to" style="width: 100%" data-placeholder="To" multiple>
+                        <option value="Option1">Option1</option>
+                        <option value="Option1">Option2</option>
+                        <option value="Option1">Option3</option>
+                        <option value="Option1">Option4</option>
+                        <option value="Option1">Option5</option>
+                    </select>
+                </div>
+                <div class="mailccbcc1">
+                    <label class="show_hide" id="cc">Cc /</label>
+                    <label class="show_hide_two" id="bcc" class=""> Bcc</label>
+                </div>
+            </div>
+            <div id="agent" class="form-group mailhidetext">
+                <div class="col-md-12">
+                    <select id="mail_cc" ng-change="vm.predictEmail()" ng-model="vm.email.cc" class="form-control" style="width: 100%" data-placeholder="Cc" multiple>
+                        <option value="Option1">Option1</option>
+                        <option value="Option1">Option2</option>
+                        <option value="Option1">Option3</option>
+                        <option value="Option1">Option4</option>
+                        <option value="Option1">Option5</option>
+                    </select>
+                </div>
+            </div>
+            <div id="agency" class="form-group mailhidetext">
+                <div class="col-md-12">
+                    <select id="mail_Bcc" ng-change="vm.predictEmail()" ng-model="vm.email.bcc"  class="form-control" style="width: 100%" data-placeholder="Bcc" multiple>
+                        <option value="Option1">Option1</option>
+                        <option value="Option1">Option2</option>
+                        <option value="Option1">Option3</option>
+                        <option value="Option1">Option4</option>
+                        <option value="Option1">Option5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <input type="text" id="inputPassword1" ng-model="vm.email.subject" class="form-control" placeholder="Subject">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10" summernote>
+                    <textarea id="mailtextarea" placeholder="Enter text here..."  ng-model="vm.email.body"class="form-control" rows="10"></textarea>
+                </div>
+            </div>
+            <div class="form-group mb15">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <span class="btn green fileinput-button">
+                        <i class="fa fa-plus fa fa-white"></i>
+                        <span>Attachment</span>
+                    <input type="file" name="files" file-model="vm.email.attachments" ng-select="vm.handleAttachments()" multiple="">
+                    </span>
+                    <button class="btn btn-send" ng-click="vm.composeMail()" type="submit">Send</button>
+                </div>
+            </div>
+            <!-- <div class="panel-body text-center no-padding selectedfilter">
+                <div class="alert alert-success width100 leftdiv">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Resume1</strong>
+                </div>
+                <div class="alert alert-success width100 leftdiv">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Resume2</strong>
+                </div>
+                <div class="alert alert-success width100 leftdiv">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Resume3</strong>
+                </div>
+                <div class="alert alert-success width100 leftdiv">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Resume4</strong>
+                </div>
+            </div> -->
+            <br>
+        </form>
+    </div>
+</div>
+<script>
+$(function() {
+    // Textarea Auto Resize
+    autosize($('#autosize'));
+
+    // Select2 Box
+    $('#Choose_Template, #mail_From').select2({
+        minimumResultsForSearch: Infinity
+    });
+    //$("#Choose_Template").select2({tags: true});
+    //$("#mail_From").select2({tags: true});
+    $("#mail_to").select2({
+        tags: true
+    });
+    $("#mail_cc").select2({
+        tags: true
+    });
+    $("#mail_Bcc").select2({
+        tags: true
+    });
+
+});
+</script>
+<script type="text/javascript">
+//<![CDATA[
+$(window).load(function() {
+    $(document).ready(function() {
+        $("#agent, #agency, #agency1, #agent1").hide();
+        $(".show_hide").show();
+        $(".show_hide_two").show();
+        $('.show_hide').click(function() {
+            $("#agent").slideToggle();
+            $("#agent1").slideToggle();
+            //$("#agency").slideUp();
+        });
+        $('.show_hide_two').click(function() {
+            $("#agency").slideToggle();
+            $("#agency1").slideToggle();
+            //$("#agent").slideUp();
+        });
+
+    });
+}); //]]>
+
+function slideThis(){
+    $("#agent, #agency, #agency1, #agent1").hide();
+        $(".show_hide").show();
+        $(".show_hide_two").show();
+        $('.show_hide').click(function() {
+            $("#agent").slideToggle();
+            $("#agent1").slideToggle();
+            //$("#agency").slideUp();
+        });
+        $('.show_hide_two').click(function() {
+            $("#agency").slideToggle();
+            $("#agency1").slideToggle();
+            //$("#agent").slideUp();
+        });
+}
+</script>
+<script>
+$(document).ready(function() {
+
+    'use strict';
+    // Summernote
+    $('#mailtextarea').summernote({
+        height: 300
+    });
+
+});
+</script>

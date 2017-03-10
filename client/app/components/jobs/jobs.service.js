@@ -89,6 +89,37 @@ class jobsService {
     //     return HTTP.get(this).post('/api/jobs/socialData', reqData).then(result => result.data );
     // }
 
+    fetchMails(data){
+        var url = "/api/mailer?label="+data.label;
+        if(data.searchText){
+            url += "&query="+data.searchText;
+        }
+        if(data.token){
+            url += "&token="+data.token
+        }
+        console.log(url)
+        return HTTP.get(this).get(url).then(result => result.data);
+    }
+
+    modifyEmail(id, action, label){
+        return HTTP.get(this).post("/api/mailer/modify", {
+            id:id,
+            addLabels: action ? [label] : [],
+            removeLabels: action?[]:[label]
+        }).then(result => result.data);;
+    }
+    fetchMailCount(){
+        return HTTP.get(this).get("/api/mailer/counter").then(result => result.data);
+    }
+
+    composeMail(params){
+        return HTTP.get(this).post("/api/mailer", params).then(result => result.data);
+    }
+
+    readMail(message){
+        return HTTP.get(this).get("/api/mailer/"+message.id).then(result => result.data);
+    }
+    
     static getInstance($http){
         return new jobsService($http);
     }
