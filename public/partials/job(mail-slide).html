@@ -486,33 +486,34 @@
                                 <div id="collapseOne2" class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <div id="">
-                                            <div class="email-body">
+                                            <!-- <div class="email-body">
                                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nisl magna, aliquet at condimentum quis, volutpat et lorem. Nunc augue ante, varius id massa ut, accumsan pretium arcu. Donec mattis, ante a consectetur blandit, mi sapien consectetur massa, sit amet molestie metus lacus in ante.</p>
                                                 <p>Aliquam porta, odio non finibus dictum, augue ligula pretium nunc, et faucibus metus diam ac nunc. Cras commodo ipsum dolor, id tristique tellus semper sit amet. Vestibulum nisl elit, sodales non fringilla et, lacinia ut ipsum. Suspendisse potenti. Cras volutpat mollis ante. </p>
                                                 <p>All the best,</p>
                                                 <p><strong>Vitaut the Great, CEO, </strong>
                                                     <br><strong>Fooby Inc.</strong>
                                                 </p>
-                                            </div>
-                                            <!-- <div class="email-attachments">
+                                            </div> -->
+                                            <div class="email-attachments" ng-if='vm.inbox.message.attachments.length > 0'>
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <hr>
-                                                        <p class="details"><strong>2 attachments</strong> &nbsp;-&nbsp; <a href="#">Download all attachments</a> &nbsp;&nbsp;&nbsp;
-                                                            <a href="#">View all Images</a></p>
-                                                        <section class="attachment">
-                                                            <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
+                                                        <p class="details"><strong>{{vm.inbox.message.attachments.length}} attachments</strong> 
+                                                        <!-- &nbsp;-&nbsp; <a href="#">Download all attachments</a> &nbsp;&nbsp;&nbsp; 
+                                                            <a href="#">View all Images</a></p>-->
+                                                        <section ng-repeat="attachment in vm.inbox.message.attachments" class="attachment">
+                                                           <!--  <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
                                                             <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
                                                             <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
                                                             <div class="clear"></div>
-                                                            <h5 class="title">some-cool-image1.jpg</h5>
+                                                            <h5 class="title">some-cool-image1.jpg</h5> -->
                                                             <p class="details">
-                                                                61K &nbsp;&nbsp;
-                                                                <a href="#">View</a> &nbsp;&nbsp;
-                                                                <a href="#">Download</a>
+                                                                {{attachment.size/1024}}  KB&nbsp;&nbsp;
+                                                                <!-- <a href="#">View</a> &nbsp;&nbsp; -->
+                                                                <a href="#=" ng-click="vm.downloadAttachment(attachment)">Download</a>
                                                             </p>
                                                         </section>
-                                                        <section class="attachment">
+                                                       <!--  <section class="attachment">
                                                             <img src="images/doc.png" width="100" alt="" class="pull-left mr5">
                                                             <h5 class="title">some-cool-image2.jpg</h5>
                                                             <p class="details">
@@ -520,13 +521,13 @@
                                                                 <a href="#">View</a> &nbsp;&nbsp;
                                                                 <a href="#">Download</a>
                                                             </p>
-                                                        </section>
+                                                        </section> -->
                                                     </div>
                                                 </div>
-                                            </div> -->
-                                        </div>
+                                            </div>
+                                        <!-- </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="panel panel-default">
                                 <<!-- div class="">

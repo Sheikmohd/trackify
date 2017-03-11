@@ -1,5 +1,5 @@
 
-<section ng-init="vm.initJobs()">
+<section>
 
     <!--<side-main-menu userId="vm.userId"></side-main-menu>-->
     <div ng-include src="'partials/side-menu-directive.tpl.html'"></div>
@@ -54,7 +54,7 @@
                                 <!------------------First Tab------------------------>
                                 <div id="first" ng-show="vm.presentStage === 'NEW'">
                                     <div class="text-left mr10">
-                                        <button id="test_color" class="btn btn-success btn-xs btn-quirk show_candidate"> <i class="fa fa-info-circle" aria-hidden="true"></i> Similar resumes <span id="badge">60</span></button>
+                                        <button id="test_color" class="btn btn-success btn-xs btn-quirk show_candidate"> <i class="fa fa-info-circle" aria-hidden="true"></i> Similar resumes <span id="badge">({{vm.internalCandidateListCount}})</span></button>
                                         <button id="removecolor" class="btn btn-success btn-xs btn-quirk candidate_content show_candidate candidate_backbtn"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>
                                         <div class="pull-right text-right right-nav job_content" style="margin: 0">
                                             <a data-toggle="modal" data-target="#uploadNewResume" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-upload" aria-hidden="true"></i> Resume</a>
@@ -371,12 +371,11 @@
                                                 <h5>Please upload a resume: </h5>
                                                 <input id="file-input" type="file" file-model="vm.resumeFile"/>
                                                 <br>
-                                                <button class="btn btn-success btn-xs btn-quirk" ng-click="vm.uploadResume()"><strong><i class="fa fa-file-word-o" aria-hidden="true"></i> Resume</strong></button>
+                                                <button class="btn btn-success btn-xs btn-quirk" ng-click="vm.uploadResume(vm.selectedCandidate.candidateId)"><strong><i class="fa fa-file-word-o" aria-hidden="true"></i> Resume</strong></button>
                                                 <br/>
-                                                <!--<button class="btn btn-primary" ng-click="vm.uploadResume()">Upload</button>-->
                                             </div>
                                             <div class="col-md-12" ng-if="vm.resumeFileMetadata.isResumeFound" >
-                                                <iframe id="frame" ng-src="{{vm.resumeFileMetadata.pathURL | trustAsResourceUrl}}" style="width:100%; height:400px;" frameborder="0"></iframe>
+                                                <iframe id="frame" ng-src="{{vm.resumeFileMetadata.pathURL | trustAsResourceUrl}}" style="width:100%; height:390px;" frameborder="0"></iframe>
                                                 <!--<iframe id="frame" src="https://docs.google.com/viewer?url=http://localhost:3000/70656a1cc6925bc75330478e45c05a9e.docx&embedded=true" style="height:400px;" frameborder="0"></iframe>-->
                                             </div>
                                         </div>
@@ -518,7 +517,7 @@
 
                                                 <!-- Nav tabs -->
                                                 <ul class="nav nav-tabs nav-line">
-                                                    <li class="active"><a data-target="#currentfeed" data-toggle="tab"><strong>Current Feed ({{vm.feedJobRecords.currentJobs.length || 0}})</strong></a></li>
+                                                    <li class="active"><a data-target="#currentfeed" data-toggle="tab"><strong>Current Feeds ({{vm.feedJobRecords.currentJobs.length || 0}})</strong></a></li>
                                                     <li><a data-target="#prevfeed" data-toggle="tab"><strong>Previous Feeds ({{vm.feedJobRecords.previousJobs.length || 0}})</strong></a></li>
                                                 </ul>
 
@@ -532,11 +531,11 @@
                                             <div class="tab-content">
                                                 <div class="tab-pane active" id="currentfeed">
                                                     <div class="panel-group" id="accordion3">
-                                                        <div class="panel panel-success" ng-repeat="row in vm.feedJobRecords.currentJobs" ng-click="vm.getFeedMsgThread(row.jobId)">
+                                                        <div class="panel panel-success" ng-repeat="row in vm.feedJobRecords.currentJobs" ng-click="vm.getFeedMsgThread(row.jobId, vm.selectedCandidate.candidateId)">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
 
-                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseOne3">
+                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseOne1">
                                                                                 <span class="col-md-6" style="font-size: 16px;margin-top: 5px">
                                                                                     <span>{{row.clientName}}</span>
                                                                                     - 
@@ -549,7 +548,7 @@
                                                                 </h4>
 
                                                             </div>
-                                                            <div id="collapseOne3" class="panel-collapse collapse mt20">
+                                                            <div id="collapseOne1" class="panel-collapse collapse mt20">
                                                                 <div class="panel-body">
                                                                     <div class="form-group">
                                                                         <!--                                    <label class="col-sm-3 control-label">Comment <span class="text-danger">*</span></label>-->
@@ -564,7 +563,7 @@
                                                                     <div class="row">
                                                                         <div class="col-sm-2"  style="float: right;margin-right: 20px;">
                                                                             <button class="btn btn-success btn-block btn-quirk btn-wide mr5"
-                                                                            ng-click="vm.sendMessage(row.jobId)">Post</button>
+                                                                            ng-click="vm.sendMessage(row.jobId, vm.selectedCandidate.candidateId)">Post</button>
                                                                         </div>
                                                                     </div>
 
@@ -642,11 +641,11 @@
                                                 </div>
                                                 <div class="tab-pane" id="prevfeed">
                                                     <div class="panel-group" id="accordion3">
-                                                        <div class="panel panel-success" ng-repeat="row in vm.feedJobRecords.previousJobs" ng-click="vm.getFeedMsgThread(row.jobId)">
+                                                        <div class="panel panel-success" ng-repeat="row in vm.feedJobRecords.previousJobs" ng-click="vm.getFeedMsgThread(row.jobId, vm.selectedCandidate.candidateId)">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
 
-                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseOne3">
+                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseOne2">
                                                                                 <span class="col-md-6" style="font-size: 16px;margin-top: 5px">
                                                                                     <span>{{row.clientName}}</span>
                                                                                     -
@@ -659,7 +658,8 @@
                                                                 </h4>
 
                                                             </div>
-                                                            <div id="collapseOne3" class="panel-collapse collapse mt20">
+                                                            <div id="collapseOne2" class="panel-collapse collapse mt20">
+                    
                                                                 <div class="panel-body">
                                                                     <div class="form-group">
                                                                         <!--                                    <label class="col-sm-3 control-label">Comment <span class="text-danger">*</span></label>-->
@@ -674,7 +674,7 @@
                                                                     <div class="row">
                                                                         <div class="col-sm-2"  style="float: right;margin-right: 20px;">
                                                                             <button class="btn btn-success btn-block btn-quirk btn-wide mr5"
-                                                                                    ng-click="vm.sendMessage(row.jobId)">Post</button>
+                                                                                    ng-click="vm.sendMessage(row.jobId, vm.selectedCandidate.candidateId)">Post</button>
                                                                         </div>
                                                                     </div>
 
@@ -769,7 +769,7 @@
             </div>
         </div><!-- contentpanel -->
 
-        <div class="contentpanel candidate_content">
+        <div class="contentpanel candidate_content" ng-if="vm.internalCandidateListCount != 0">
             <!-- content goes here... -->
             <div class="row">
 
@@ -779,11 +779,11 @@
 
                         <div class="panel-body text-center no-padding">
                             <ul class="nav nav-tabs nav-line tabview">
-                                <li class="active"><a data-target="#internal_data1" data-toggle="tab"><strong>Internal Data <span id="badge">(10,023)</span></strong></a></li>
+                                <li class="active"><a data-target="#internal_data1" data-toggle="tab"><strong>Internal Data <span id="badge">({{vm.internalCandidateListCount}})</span></strong></a></li>
                                 <li><a data-target="#social_data1" data-toggle="tab"><strong>Social Data <span id="badge">(32,904)</span></strong></a></li>
                                 <li style="float:right">
                                     <ul class="unstyled inbox-pagination">
-                                        <li><span>1-50 of 234</span></li>
+                                        <li><span>1-{{vm.internalCandidateList.length}} of {{vm.internalCandidateListCount}}</span></li>
                                         <li>
                                             <a class="np-btn" href="#"><i class="fa fa-angle-left  pagination-left"></i></a>
                                         </li>
@@ -795,15 +795,17 @@
                             </ul>
 
 
-
                             <div class="tab-content">
+                                
                                 <!------------------First Tab------------------------>
                                 <div class="tab-pane active no-background" id="internal_data1">
                                     <div class="text-left mr10">
                                         <div class="pull-right text-right right-nav" style="margin: 0">
                                             <a data-toggle="modal" data-target="#internalfilter" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-filter" aria-hidden="true"></i> Filter</a>
-                                            <a data-toggle="modal" data-target="#movetoactive1" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-user-plus" aria-hidden="true"></i> Move to Active Jobs</a>
-                                            <a data-toggle="modal" data-target="#addstatus" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-plus-square" aria-hidden="true"></i> Status</a>
+                                            <a data-toggle="modal" data-target="#movetoactive1" ng-click="vm.getSelectedIDCandidates()" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-user-plus" aria-hidden="true"></i> Move to new resume</a>
+                                            <span ng-include src="'partials/candidate.internal-data.move-to-active-jobs.html'" ng-if="vm.checkedIDCandidateNum !== 0"></span>
+                                            <a data-toggle="modal" data-target="#internaldata_addstatus" ng-click="vm.getSelectedIDCandidates()" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-plus-square" aria-hidden="true"></i> Status</a>
+                                            <span ng-include src="'partials/candidate.internal-data.status.html'" ng-if="vm.checkedIDCandidateNum !== 0"></span>
                                             <button class="btn btn-success btn-xs btn-quirk"><i class="fa fa-envelope" aria-hidden="true"></i> Send</button>
                                         </div>
                                     </div>
@@ -817,7 +819,7 @@
                                     <div class="text-left mr10">
                                         <div class="pull-right text-right right-nav" style="margin: 0">
                                             <a data-toggle="modal" data-target="#externalfilter" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-filter" aria-hidden="true"></i> Filter</a>
-                                            <a data-toggle="modal" data-target="#movetoactive" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-user-plus" aria-hidden="true"></i> Move to active Jobs</a>
+                                            <a data-toggle="modal" data-target="#movetoactive" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-user-plus" aria-hidden="true"></i> Move to new resume</a>
                                             <a data-toggle="modal" data-target="#addstatus1" class="btn btn-success btn-xs btn-quirk"><i class="fa fa-plus-square" aria-hidden="true"></i> Status</a>
                                             <button class="btn btn-success btn-xs btn-quirk"><i class="fa fa-envelope" aria-hidden="true"></i> Send</button>
                                             <!--<button class="btn btn-success btn-xs btn-quirk"><i class="fa fa-download" aria-hidden="true"></i> Excel</button>-->
@@ -834,7 +836,7 @@
 
                         </div>
 
-                        <div class="panel-body text-center no-padding selectedfilter">
+                        <!--<div class="panel-body text-center no-padding selectedfilter">
                             <div class="alert alert-success width100 leftdiv">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 <strong>Filter1</strong>
@@ -849,12 +851,12 @@
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 <strong>Filter3</strong>
                             </div>
-                        </div>
+                        </div>-->
 
                         <div class="col-md-3 list-view mCustomScrollbar white-background" data-mcs-theme="dark">
                             <h3 class="text-center text-head"  style="font-size: 21px;">Candidates</h3>
                             <div class="input-group input-search-contact mt10 border-grey">
-                                <input class="form-control" placeholder="Search contact" type="text">
+                                <input class="form-control" placeholder="Search contact" type="text" ng-model="vm.searchKeywordInternalData">
                                 <span class="input-group-btn">
                                             <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
                                         </span>
@@ -862,82 +864,42 @@
 
                             <div class="chk-all">
                                 <label class="ckbox ckbox-success">
-                                    <input type="checkbox"><span>All</span>
+                                    <input type="checkbox" ng-model="vm.flagCheckAllIDCandidate" ng-change="vm.checkAllIDCandidate()"><span>All</span>
                                 </label>
                             </div>
                             <div class="clear"></div>
-                            <div class="list active">
+                            <div class="list" ng-repeat="idCandRow in vm.internalCandidateList | filter: vm.searchKeywordInternalData" 
+                            ng-click="vm.internalDataCandidateDetailsFunction(idCandRow.candidateId)" onclick="disableContent1();">
                                 <label class="col-sm-1 ckbox2 ckbox ckbox-success">
-                                    <input type="checkbox"><span></span>
+                                    <input type="checkbox" ng-model="vm.checkIDCandidateList[$index]"><span></span>
                                 </label>
                                 <div class="candidate-list">
-                                    <h3>Ashok Kumar</h3>
-                                    <h4>Flipkart  </h4>
-                                    <a href="javascript:;" class="btn btn-info btn-xs btn-quirk list-float-btn">AR</a>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-
-                            <div class="list">
-                                <label class="col-sm-1 ckbox2 ckbox ckbox-success">
-                                    <input type="checkbox"><span></span>
-                                </label>
-                                <div class="candidate-list">
-                                    <h3>Ashok Kumar</h3>
-                                    <h4>Flipkart </h4>
-                                    <a href="javascript:;" class="btn btn-info btn-xs btn-quirk list-float-btn">AR</a>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-
-                            <div class="list">
-                                <label class="col-sm-1 ckbox2 ckbox ckbox-success">
-                                    <input type="checkbox"><span></span>
-                                </label>
-                                <div class="candidate-list">
-                                    <h3>Ashok Kumar</h3>
-                                    <h4>Flipkart  </h4>
-                                    <a href="javascript:;" class="btn btn-info btn-xs btn-quirk list-float-btn">AR</a>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-
-                            <div class="list">
-                                <label class="col-sm-1 ckbox2 ckbox ckbox-success">
-                                    <input type="checkbox"><span></span>
-                                </label>
-                                <div class="candidate-list">
-                                    <h3>Ashok Kumar</h3>
-                                    <h4>Flipkart </h4>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-
-                            <div class="list">
-                                <label class="col-sm-1 ckbox2 ckbox ckbox-success">
-                                    <input type="checkbox"><span></span>
-                                </label>
-                                <div class="candidate-list">
-                                    <h3>Ashok Kumar</h3>
-                                    <h4>Flipkart </h4>
+                                    <h3>{{idCandRow.candidateName}}</h3>
+                                    <h4 style="text-transform: capitalize;">{{idCandRow.presentEmployer | lowercase}}</h4>
+                                    <!--<a href="javascript:;" class="btn btn-info btn-xs btn-quirk list-float-btn">AR</a>-->
                                 </div>
                                 <div class="clear"></div>
                             </div>
                         </div>
+
                         <div class="col-md-9">
                             <div class="header-intro text-left white-background">
-                                <h3>Ashok Kumar
+                                
+                                <h3>{{vm.iDataCandidateDetails.candidateName}}
                                     <a href="javascript:;" class="btn btn-inverse btn-xs btn-quirk list-float-btn1">JOHN WALVE</a>
                                 </h3>
-                                <h4>Flipkart </h4>
-                                <h4>IIT Guwahati</h4>
+                                <h4>{{vm.iDataCandidateDetails.employer || '-'}} </h4>
+                                <h4>{{vm.iDataCandidateDetails.college || '-'}}</h4>
 
 
                                 <div class="text-right right-nav" style="margin: 0">
                                     <button class="btn btn-info btn-xs btn-quirk" style="float:left">Awaiting resume</button>
-                                    <a class="btn btn-success btn-xs btn-quirk" data-toggle="modal" data-target="#Similar-Jobs"><i class="fa fa-upload" aria-hidden="true"></i> Resume</a>
+                                    <a class="btn btn-success btn-xs btn-quirk" data-toggle="modal" data-target="#candidate-resume-upload"><i class="fa fa-upload" aria-hidden="true"></i> Resume</a>
+                                    <span ng-include src="'partials/job.candidate.new-resume.html'"></span>
                                     <a class="btn btn-success btn-xs btn-quirk" id="button8"><i class="fa fa-envelope" aria-hidden="true"></i> Send</a>
-                                    <button class="btn btn-success btn-xs btn-quirk"><i class="fa fa-linkedin-square" aria-hidden="true"></i> </button>
+                                    <a class="btn btn-success btn-xs btn-quirk" ng-if="vm.iDataLinkedInLink != 'NOT FOUND'" href="{{vm.iDataLinkedInLink}}" target="_blank">
+                                        <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                                    </a>
                                 </div>
                             </div>
 
@@ -945,105 +907,121 @@
                                 <div class="border-grey white-background">
                                     <ul class="nav nav-tabs nav-justified nav-inverse" style="border-bottom: 1px solid #dddddd;">
                                         <li class="active"><a data-target="#resume_candidate" data-toggle="tab"><strong><i class="fa fa-file-word-o" aria-hidden="true"></i> Resume</strong></a></li>
-                                        <li><a data-target="#detail_candidate" data-toggle="tab"><strong><i class="fa fa-file-text" aria-hidden="true"></i> Details</strong></a></li>
-                                        <li><a data-target="#feed_candidate" data-toggle="tab"><strong><i class="fa fa-rss" aria-hidden="true"></i> Feed <span id="num">(2)</span></strong></a></li>
+                                        <li><a data-target="#detail_candidate" onclick="disableContent1();" data-toggle="tab"><strong><i class="fa fa-file-text" aria-hidden="true"></i> Details</strong></a></li>
+                                        <li><a data-target="#feed_candidate" data-toggle="tab"><strong><i class="fa fa-rss" aria-hidden="true"></i> Feed <span id="num">({{(vm.iDataFeedJobRecords.currentJobs.length+vm.iDataFeedJobRecords.previousJobs.length) || 0}})</span></strong></a></li>
                                     </ul>
 
                                     <!-- Tab panes -->
                                     <div class="tab-content">
                                         <div class="tab-pane active popupscroll mCustomScrollbar" data-mcs-theme="dark" id="resume_candidate">
-                                            <img src="images/resume.png" class="img-responsive"/>
+                                            <!--<div ng-if="!vm.resumeFileMetadata.isResumeFound">
+                                                <h5>Please upload a resume: </h5>
+                                                <input id="file-input" type="file" file-model="vm.resumeFile"/>
+                                                <br>
+                                                <button class="btn btn-success btn-xs btn-quirk" ng-click="vm.uploadResume()"><strong><i class="fa fa-file-word-o" aria-hidden="true"></i> Resume</strong></button>
+                                                <br/>
+                                            </div>-->
+                                            <div class="col-md-12" ng-if="vm.iDataResumeFileMetadata.isResumeFound" >
+                                                <iframe id="frame" ng-src="{{vm.iDataResumeFileMetadata.pathURL | trustAsResourceUrl}}" style="width:100%; height:390px;" frameborder="0"></iframe>
+                                            </div>
                                         </div>
 
 
                                         <div class="tab-pane popupscroll mCustomScrollbar" data-mcs-theme="dark" id="detail_candidate">
                                             <form id="detailform1" action="" class="form-horizontal">
                                                 <input type="hidden" name="editreadonly_hidden1" value="0" id="editreadonly_hidden1"/>
-                                                <a class="btn btn-default btn-xs btn-quirk btn-success list-float-btn1" id="editreadonly1" onclick="myFunction1()">
+                                                <!--<a class="btn btn-default btn-xs btn-quirk btn-success list-float-btn1" id="editreadonly1" onclick="myFunction1()">
                                                     <i class='fa fa-pencil-square-o' aria-hidden='true'></i>
-                                                </a>
+                                                </a>-->
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">Name <span class="text-danger">*</span></label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="name" class="form-control txtreadonly" placeholder="Type your name..." required/>
+                                                        <input type="text" name="name" class="form-control txtreadonly" ng-model="vm.iDataCandidateDetails.candidateName" placeholder="Type your name..." required/>
+                                                        <a class="btn btn-success btn-xs btn-quirk" id="editreadonly1" style="position: absolute; top: 0; right: -25px;"
+                                                           onclick="myFunction1()" ng-click="vm.saveIDCandidateDetails(vm.iDataCandidateDetails.candidateId)">
+
+                                                            <i class='fa fa-pencil-square-o' aria-hidden='true'></i>
+                                                        </a>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">Mail ID <span class="text-danger">*</span></label>
                                                     <div class="col-sm-8">
-                                                        <select id="cand_mail" class="form-control txtreadonly" style="width: 100%" data-placeholder="" multiple>
+                                                        <input type="text" name="email" class="form-control txtreadonly" ng-model="vm.iDataCandidateDetails.email" placeholder="Type email address..." required/>
+                                                        <!--<select id="cand_mail" class="form-control txtreadonly" style="width: 100%" data-placeholder="" multiple>
                                                             <option value="abc@gmail.com">abc@gmail.com</option>
                                                             <option value="option1">option1</option>
                                                             <option value="option1">option2</option>
                                                             <option value="option1">option3</option>
                                                             <option value="option1">option4</option>
-                                                        </select>
+                                                        </select>-->
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">Mobile</label>
                                                     <div class="col-sm-8">
-                                                        <select id="cand_mob" class="form-control txtreadonly" style="width: 100%" data-placeholder="" multiple>
+                                                        <input type="text" name="contact" class="form-control txtreadonly" ng-model="vm.iDataCandidateDetails.contact" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Type contact number..." required/>
+                                                        <!--<select id="cand_mob" class="form-control txtreadonly" style="width: 100%" data-placeholder="" multiple>
                                                             <option value="+91 8888888888">+91 8888888888</option>
                                                             <option value="option1">option1</option>
                                                             <option value="option1">option2</option>
                                                             <option value="option1">option3</option>
                                                             <option value="option1">option4</option>
-                                                        </select>
+                                                        </select>-->
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">Experience <span class="text-danger">*</span></label>
                                                     <div class="col-sm-2">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.]/g,'');" name="" class="txtreadonly form-control" placeholder=""/>
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.experience" oninput="this.value=this.value.replace(/[^0-9.]/g,'');" 
+                                                        maxlength="4" name="" class="txtreadonly form-control" placeholder="" required/>
                                                     </div>
-
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">Company</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="" class="form-control" />
-                                                        <!--                                      <div class="input-group mb15">
-                                                                                                  <input type="text" name="" class="form-control" />
-                                                                                                  <span class="input-group-addon cursor" data-toggle="modal" data-target="#newclient"><i class="glyphicon glyphicon-pencil"> Edit</i></span>
-                                                                                             </div>-->
+                                                        <input type="text" name="" ng-model="vm.iDataCandidateDetails.employer" class="form-control" />
+                                                <!--    <div class="input-group mb15">
+                                                                <input type="text" name="" class="form-control" />
+                                                                <span class="input-group-addon cursor" data-toggle="modal" data-target="#newclient"><i class="glyphicon glyphicon-pencil"> Edit</i></span>
+                                                        </div>-->
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-3 control-label">CTC <span class="text-danger">*</span></label>
+                                                    <label class="col-sm-3 control-label">CTC (lakhs)<span class="text-danger">*</span></label>
                                                     <div class="col-sm-2">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" name="" class="txtreadonly form-control" placeholder="Fixed">
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.ctcFixed" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" maxlength="5" name="" class="txtreadonly form-control" placeholder="Fixed" required>
                                                     </div>
                                                     <div class="col-sm-2">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" name="" class="txtreadonly form-control" placeholder="Variable">
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.ctcVariable" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" maxlength="5" name="" class="txtreadonly form-control" placeholder="Variable" required>
                                                     </div>
                                                     <div class="col-sm-2">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" name="" class="txtreadonly form-control" placeholder="ESOPS">
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.ctcEsops" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" maxlength="5" name="" class="txtreadonly form-control" placeholder="ESOPS" required>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-3 control-label">ECTC <span class="text-danger">*</span></label>
+                                                    <label class="col-sm-3 control-label">ECTC (lakhs)<span class="text-danger">*</span></label>
                                                     <div class="col-sm-2">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" name="" class="txtreadonly form-control" placeholder="Fixed">
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.eCTCFixed" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" maxlength="5" name="" class="txtreadonly form-control" placeholder="Fixed" required>
                                                     </div>
                                                     <div class="col-sm-2">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" name="" class="txtreadonly form-control" placeholder="Variable">
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.eCTCVariable" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" maxlength="5" name="" class="txtreadonly form-control" placeholder="Variable" required>
                                                     </div>
                                                     <div class="col-sm-2">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" name="" class="txtreadonly form-control" placeholder="ESOPS">
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.eCTCEsops" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" maxlength="5" name="" class="txtreadonly form-control" placeholder="ESOPS" required>
                                                     </div>
                                                 </div>
 
                                                 <div id="dvPassport" class="form-group col-md-6">
-                                                    <label class="col-sm-6 control-label">Notice Period</label>
+                                                    <label class="col-sm-6 control-label">Notice Period (days)</label>
                                                     <div class="col-sm-4">
-                                                        <input type="text" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" class="txtreadonly form-control" placeholder="" style="width: 111px;">
+                                                        <input type="text" ng-model="vm.iDataCandidateDetails.noticePeriod" oninput="this.value=this.value.replace(/[^0-9.0-9]/g,'');" maxlength="2" class="txtreadonly form-control" placeholder="" style="width: 111px;">
                                                     </div>
                                                 </div>
 
@@ -1051,7 +1029,7 @@
                                                     <label class="col-sm-6 control-label">Candidate serving notice?</label>
                                                     <div class="col-sm-6 mt10">
                                                         <label class="ckbox ckbox-success">
-                                                            <input type="checkbox"><span></span>
+                                                            <input type="checkbox" ng-model="vm.iDataCandidateDetails.serveNotice"><span></span>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -1061,7 +1039,17 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">Job Location <span class="text-danger">*</span></label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="name" class="form-control txtreadonly" placeholder="" required/>
+                                                        <!--<input type="text" name="name" class="form-control txtreadonly" placeholder="" required/>-->
+                                                        <select id="select_candloc_id" class="ele1 form-control hideable" style="width: 100%" data-placeholder="Enter Job Location"
+                                                                ng-model="vm.iDataCandidateDetails.location" required>
+                                                            <option value="Bangalore">Bangalore</option>
+                                                            <option value="Hyderabad">Hyderabad</option>
+                                                            <option value="Ahmedabad">Ahmedabad</option>
+                                                            <option value="Pune">Pune</option>
+                                                            <option value="Nagpur">Nagpur</option>
+                                                            <option value="Mumbai">Mumbai</option>
+                                                            <option value="Noida">Noida</option>
+                                                        </select> 
                                                     </div>
                                                 </div>
 
@@ -1080,8 +1068,8 @@
 
                                                 <!-- Nav tabs -->
                                                 <ul class="nav nav-tabs nav-line">
-                                                    <li class="active"><a data-target="#currentfeed" data-toggle="tab"><strong>Current Feed (3)</strong></a></li>
-                                                    <li><a data-target="#prevfeed" data-toggle="tab"><strong>Previous Feeds(2)</strong></a></li>
+                                                    <li class="active"><a data-target="#currentfeed2" data-toggle="tab"><strong>Current Feeds ({{vm.iDataFeedJobRecords.currentJobs.length || 0}})</strong></a></li>
+                                                    <li><a data-target="#prevfeed2" data-toggle="tab"><strong>Previous Feeds ({{vm.iDataFeedJobRecords.previousJobs.length || 0}})</strong></a></li>
                                                 </ul>
 
                                                 <div class="clear" style="margin: 20px;"></div>
@@ -1092,31 +1080,32 @@
 
                                             <!-- Tab panes -->
                                             <div class="tab-content">
-                                                <div class="tab-pane active" id="currentfeed">
+                                                <div class="tab-pane active" id="currentfeed2">
                                                     <div class="panel-group" id="accordion3">
-                                                        <div class="panel panel-success">
+                                                            <div class="panel panel-success" ng-repeat="row in vm.iDataFeedJobRecords.currentJobs" ng-click="vm.getFeedMsgThread(row.jobId, vm.iDataCandidateDetails.candidateId)">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
 
-                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseOne3">
+                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseTwo1">
                                                                                 <span class="col-md-6" style="font-size: 16px;margin-top: 5px">
-                                                                                    <span>Flipkart</span>
-                                                                                    -
-                                                                                    <span>Architect </span>
+                                                                                    <span>{{row.clientName}}</span>
+                                                                                    - 
+                                                                                    <span>{{row.designation}} </span>
                                                                                 </span>
-                                                                        <button class="col-md-2 btn btn-info btn-xs btn-quirk">HR Reject</button>
-                                                                        <span class="list-subhead"> Parul</span>
+                                                                        <button class="col-md-2 btn btn-info btn-xs btn-quirk width-auto">{{row.status}}</button>
+                                                                        <span class="list-subhead"> {{row.userName}}</span>
                                                                         <div class="clear"></div>
                                                                     </a>
                                                                 </h4>
 
                                                             </div>
-                                                            <div id="collapseOne3" class="panel-collapse collapse mt20">
+                                                            <div id="collapseTwo1" class="panel-collapse collapse mt20">
                                                                 <div class="panel-body">
                                                                     <div class="form-group">
                                                                         <!--                                    <label class="col-sm-3 control-label">Comment <span class="text-danger">*</span></label>-->
                                                                         <div class="col-sm-12">
-                                                                            <textarea rows="5" class="form-control" placeholder="What ‘s on your mind about this candidate?" required></textarea>
+                                                                            <textarea rows="5" class="form-control" placeholder="What ‘s on your mind about this candidate?"
+                                                                                      ng-model="vm.postMessage" required></textarea>
                                                                         </div>
                                                                     </div>
                                                                     <div class="clear"></div>
@@ -1124,7 +1113,8 @@
 
                                                                     <div class="row">
                                                                         <div class="col-sm-2"  style="float: right;margin-right: 20px;">
-                                                                            <button class="btn btn-success btn-block btn-quirk btn-wide mr5">Post</button>
+                                                                            <button class="btn btn-success btn-block btn-quirk btn-wide mr5"
+                                                                            ng-click="vm.sendMessage(row.jobId, vm.iDataCandidateDetails.candidateId)">Post</button>
                                                                         </div>
                                                                     </div>
 
@@ -1132,9 +1122,9 @@
                                                                     <!-- Nav tabs -->
                                                                     <ul class="nav nav-tabs nav-line">
                                                                         <li class="active"><a data-target="#All" data-toggle="tab"><strong>All</strong></a></li>
-                                                                        <li><a data-target="#Details" data-toggle="tab"><strong>Details</strong></a></li>
+
                                                                         <li><a data-target="#Tags" data-toggle="tab"><strong>Tags</strong></a></li>
-                                                                        <li><a data-target="#Mails" data-toggle="tab"><strong>Mails</strong></a></li>
+                                                                        <!--<li><a data-target="#Mails" data-toggle="tab"><strong>Mails</strong></a></li>-->
                                                                         <li><a data-target="#Status" data-toggle="tab"><strong>Status</strong></a></li>
                                                                         <li><a data-target="#Notes" data-toggle="tab"><strong>Notes</strong></a></li>
                                                                     </ul>
@@ -1143,168 +1133,56 @@
                                                                     <!-- Tab panes -->
                                                                     <div class="tab-content">
                                                                         <div class="tab-pane active" id="All">
-                                                                            <div class="listcomment">
-                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                                <h5> Deepak</h5>
-                                                                                <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.TAGS">
+                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5> {{innerrow.sentFrom}}</h5>
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
                                                                             </div>
-
-                                                                            <div class="listcomment">
-                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                                <h5> Deepak</h5>
-                                                                                <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
+                                                                            <!--<div class="listcomment" ng-repeat="innerrow in row.msgThread.MAILS">
+                                                                                <h3 style="font-size: 14px;">You have received mail from: <span class="right">{{innerrow.timestamp | date: "h:mma dd/MM/yyyy"}}</span></h3>
+                                                                                <h5>{{innerrow.sentFrom}}</h5>  
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
+                                                                            </div>-->
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.STATUS">
+                                                                                <h3 style="font-size: 14px;">Changed By: <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>{{innerrow.changedBy}}</h5>
+                                                                                <h4 style="font-size: 14px;text-transform: capitalize;">Status: {{innerrow.status | lowercase}}</h4>
                                                                             </div>
-
-                                                                            <div class="listcomment">
-                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                                <h5> Deepak</h5>
-                                                                                <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.NOTES">
+                                                                                <h3 style="font-size: 14px;">Note:<span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>Saved By: {{innerrow.savedBy}}</h5>
+                                                                                <h4 style="font-size: 14px;">{{innerrow.message}}</h4>
                                                                             </div>
-
-                                                                            <div class="listcomment">
-                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                                <h5> Deepak</h5>
-                                                                                <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="tab-pane" id="Details">
-                                                                            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                                                                         </div>
                                                                         <div class="tab-pane" id="Tags">
-                                                                            Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.TAGS">
+                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5> {{innerrow.sentFrom}}</h5>
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
+                                                                            </div>
                                                                         </div>
-                                                                        <div class="tab-pane" id="Mails">
-                                                                            Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-                                                                        </div>
+                                                                        <!--<div class="tab-pane" id="Mails">
+                                                                            <div class="listcomment" ng-repeat="innerrow in row.msgThread.MAILS">
+                                                                                <h3 style="font-size: 14px;">You have received mail from: <span class="right">{{innerrow.timestamp | date: "h:mma dd/MM/yyyy"}}</span></h3>
+                                                                                <h5>{{innerrow.sentFrom}}</h5>
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
+                                                                            </div>
+                                                                            &lt;!&ndash;Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.&ndash;&gt;
+                                                                        </div>-->
                                                                         <div class="tab-pane" id="Status">
-                                                                            Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.STATUS">
+                                                                                <h3 style="font-size: 14px;">Changed By: <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>{{innerrow.changedBy}}</h5>
+                                                                                <h4 style="font-size: 14px; text-transform: capitalize;">Status: {{innerrow.status | lowercase}}</h4>
+                                                                            </div>
                                                                         </div>
                                                                         <div class="tab-pane" id="Notes">
-                                                                            Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.NOTES">
+                                                                                <h3 style="font-size: 14px;">Note:<span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>Saved By: {{innerrow.savedBy}}</h5>
+                                                                                <h4 style="font-size: 14px;">{{innerrow.message}}</h4>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="panel panel-success">
-                                                            <div class="panel-heading">
-                                                                <h4 class="panel-title">
-                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseTwo3">
-                                                                                <span class="col-md-6" style="font-size: 16px;margin-top: 5px">
-                                                                                    <span>Makemytrip </span>
-                                                                                    -
-                                                                                    <span>Architect </span>
-
-                                                                                </span>
-                                                                        <button class="col-md-2 btn btn-info btn-xs btn-quirk">HR Reject</button>
-                                                                        <span class="list-subhead"> Parul</span>
-                                                                        <div class="clear" ></div>
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapseTwo3" class="panel-collapse collapse mt20">
-                                                                <div class="panel-body">
-                                                                    <div class="form-group">
-                                                                        <!--                                    <label class="col-sm-3 control-label">Comment <span class="text-danger">*</span></label>-->
-                                                                        <div class="col-sm-12">
-                                                                            <textarea rows="5" class="form-control" placeholder="What ‘s on your mind about this candidate?" required></textarea>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="clear"></div>
-                                                                    <br>
-
-                                                                    <div class="row">
-                                                                        <div class="col-sm-2"  style="float: right;margin-right: 20px;">
-                                                                            <button class="btn btn-success btn-block btn-quirk btn-wide mr5">Post</button>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <hr>
-
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                    </div>
-
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                    </div>
-
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                    </div>
-
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="panel panel-success">
-                                                            <div class="panel-heading">
-                                                                <h4 class="panel-title">
-                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseThree3">
-                                                                                <span class="col-md-6" style="font-size: 16px;margin-top: 5px">
-                                                                                    <span>Flipkart</span>
-                                                                                    -
-                                                                                    <span>Architect </span>
-                                                                                </span>
-                                                                        <button class="col-md-2 btn btn-info btn-xs btn-quirk">HR Reject</button>
-                                                                        <span class="list-subhead"> Parul</span>
-                                                                        <div class="clear" ></div>
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapseThree3" class="panel-collapse collapse mt20">
-                                                                <div class="panel-body">
-
-                                                                    <div class="form-group">
-                                                                        <!--                                    <label class="col-sm-3 control-label">Comment <span class="text-danger">*</span></label>-->
-                                                                        <div class="col-sm-12">
-                                                                            <textarea rows="5" class="form-control" placeholder="What ‘s on your mind about this candidate?" required></textarea>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="clear" style="height: 16px;"></div>
-
-                                                                    <br>
-
-                                                                    <div class="row">
-                                                                        <div class="col-sm-2"  style="float: right;margin-right: 20px;">
-                                                                            <button class="btn btn-success btn-block btn-quirk btn-wide mr5">Post</button>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <hr>
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                    </div>
-
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                    </div>
-
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
-                                                                    </div>
-
-                                                                    <div class="listcomment">
-                                                                        <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">5:45PM, Thu 12/5/2012</span></h3>
-                                                                        <h5> Deepak</h5>
-                                                                        <h4 style="font-size: 14px;">@Vikram hey his is a super guy. Process him.</h4>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1312,8 +1190,117 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="tab-pane" id="prevfeed">
-                                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                                <div class="tab-pane" id="prevfeed2">
+                                                    <div class="panel-group" id="accordion3">
+                                                        <div class="panel panel-success" ng-repeat="row in vm.iDataFeedJobRecords.previousJobs" ng-click="vm.getFeedMsgThread(row.jobId, vm.iDataCandidateDetails.candidateId)">
+                                                            <div class="panel-heading">
+                                                                <h4 class="panel-title">
+
+                                                                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion3" data-target="#collapseTwo2">
+                                                                                <span class="col-md-6" style="font-size: 16px;margin-top: 5px">
+                                                                                    <span>{{row.clientName}}</span>
+                                                                                    -
+                                                                                    <span>{{row.designation}} </span>
+                                                                                </span>
+                                                                        <button class="col-md-2 btn btn-info btn-xs btn-quirk width-auto">{{row.status}}</button>
+                                                                        <span class="list-subhead"> {{row.userName}}</span>
+                                                                        <div class="clear"></div>
+                                                                    </a>
+                                                                </h4>
+
+                                                            </div>
+                                                            <div id="collapseTwo2" class="panel-collapse collapse mt20">
+                    
+                                                                <div class="panel-body">
+                                                                    <div class="form-group">
+                                                                        <!--                                    <label class="col-sm-3 control-label">Comment <span class="text-danger">*</span></label>-->
+                                                                        <div class="col-sm-12">
+                                                                            <textarea rows="5" class="form-control" placeholder="What ‘s on your mind about this candidate?"
+                                                                                      ng-model="vm.postMessage" required></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="clear"></div>
+                                                                    <br>
+
+                                                                    <div class="row">
+                                                                        <div class="col-sm-2"  style="float: right;margin-right: 20px;">
+                                                                            <button class="btn btn-success btn-block btn-quirk btn-wide mr5"
+                                                                                    ng-click="vm.sendMessage(row.jobId, vm.iDataCandidateDetails.candidateId)">Post</button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <hr>
+                                                                    <!-- Nav tabs -->
+                                                                    <ul class="nav nav-tabs nav-line">
+                                                                        <li class="active"><a data-target="#All" data-toggle="tab"><strong>All</strong></a></li>
+
+                                                                        <li><a data-target="#Tags" data-toggle="tab"><strong>Tags</strong></a></li>
+                                                                        <!--<li><a data-target="#Mails" data-toggle="tab"><strong>Mails</strong></a></li>-->
+                                                                        <li><a data-target="#Status" data-toggle="tab"><strong>Status</strong></a></li>
+                                                                        <li><a data-target="#Notes" data-toggle="tab"><strong>Notes</strong></a></li>
+                                                                    </ul>
+
+
+                                                                    <!-- Tab panes -->
+                                                                    <!-- Tab panes -->
+                                                                    <div class="tab-content">
+                                                                        <div class="tab-pane active" id="All">
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.TAGS">
+                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5> {{innerrow.sentFrom}}</h5>
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
+                                                                            </div>
+                                                                            <!--<div class="listcomment" ng-repeat="innerrow in row.msgThread.MAILS">
+                                                                                <h3 style="font-size: 14px;">You have received mail from: <span class="right">{{innerrow.timestamp | date: "h:mma dd/MM/yyyy"}}</span></h3>
+                                                                                <h5>{{innerrow.sentFrom}}</h5>
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
+                                                                            </div>-->
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.STATUS">
+                                                                                <h3 style="font-size: 14px;">Changed By: <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>{{innerrow.changedBy}}</h5>
+                                                                                <h4 style="font-size: 14px; text-transform: capitalize;">Status: {{innerrow.status | lowercase}}</h4>
+                                                                            </div>
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.NOTES">
+                                                                                <h3 style="font-size: 14px;">Note:<span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>Saved By: {{innerrow.savedBy}}</h5>
+                                                                                <h4 style="font-size: 14px;">{{innerrow.message}}</h4>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="tab-pane" id="Tags">
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.TAGS">
+                                                                                <h3 style="font-size: 14px;">You are tagged in a comment <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5> {{innerrow.sentFrom}}</h5>
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!--<div class="tab-pane" id="Mails">
+                                                                            <div class="listcomment" ng-repeat="innerrow in row.msgThread.MAILS">
+                                                                                <h3 style="font-size: 14px;">You have received mail from: <span class="right">{{innerrow.timestamp | date: "h:mma dd/MM/yyyy"}}</span></h3>
+                                                                                <h5>{{innerrow.sentFrom}}</h5>
+                                                                                <h4 style="font-size: 14px;">@{{innerrow.sentTo}} {{innerrow.message}}</h4>
+                                                                            </div>
+                                                                            &lt;!&ndash;Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.&ndash;&gt;
+                                                                        </div>-->
+                                                                        <div class="tab-pane" id="Status">
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.STATUS">
+                                                                                <h3 style="font-size: 14px;">Changed By: <span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>{{innerrow.changedBy}}</h5>
+                                                                                <h4 style="font-size: 14px; text-transform: capitalize;">Status: {{innerrow.status | lowercase}}</h4>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="tab-pane" id="Notes">
+                                                                            <div class="listcomment" ng-repeat="innerrow in vm.feedMsgRecords.NOTES">
+                                                                                <h3 style="font-size: 14px;">Note:<span class="right">{{innerrow.timestamp}}</span></h3>
+                                                                                <h5>Saved By: {{innerrow.savedBy}}</h5>
+                                                                                <h4 style="font-size: 14px;">{{innerrow.message}}</h4>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -1458,6 +1445,7 @@
 
         $('#enableTxt1').html("<i class='fa fa-pencil-square-o' aria-hidden='true'></i>");
 
+        $('#editreadonly1').html("<i class='fa fa-pencil-square-o' aria-hidden='true'></i>");
         $("#detailform1 :input").prop("disabled", true);
         $("#editreadonly_hidden1").val(0);
     }
@@ -1469,7 +1457,7 @@
         var editreadonly_hidden = $("#editreadonly_hidden1").val();
         if (editreadonly_hidden == 0)
         {
-            $('#editreadonly').html("<i class='fa fa-floppy-o' aria-hidden='true'></i>");
+            $('#editreadonly1').html("<i class='fa fa-floppy-o' aria-hidden='true'></i>");
             $("#detailform1 :input").prop("disabled", false);
             $("#editreadonly_hidden1").val(1);
         } else
@@ -1538,6 +1526,11 @@
             $("#removecolor").removeClass("color_fill");
         });
     });
+
+    function resetSimilarResumeView(){ 
+        $(".job_content").show();
+        $(".candidate_content").hide();
+    }
 </script>
 
 <script>

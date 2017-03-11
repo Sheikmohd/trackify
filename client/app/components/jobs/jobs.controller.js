@@ -3,8 +3,11 @@ const SERVICE = new WeakMap();
 let trackFilterObjectLastApplied = [{"filterTag":"filterByRecruiter"},{"filterTag":"selectStatus"}]; //for init stage -  New Resume stage
 
 class JobsController {
-  constructor(AuthFactory, jobsService) {
+  constructor($rootScope, AuthFactory, jobsService, shareData) {
         this.userId = 1; //get this data from localstorage
+
+        this.shareData = shareData; //service to pass data to fro from controllers
+
         this.checkedAllCandidateFlag = false;
         this.sideMenuState = {flag: 'myjob', status: 'active'};
         this.presentStage = "NEW";
@@ -18,6 +21,10 @@ class JobsController {
         this.interviewDateData = {"date": null, "time": null, "meridian": null, "round": 1, "rescheduleReason": null};
         this.filterObject = {"NEW": [], "SHORTLIST": [],"INTERVIEW": [], "OFFER": [], "JOINED": [], "CANDIDATE": []};
         this.abscondingReason = null;
+
+
+        //Social Data - Internal data variables
+        this.selectedIDCandidateIdArr = [];
 
         //Init for Social Data Section
         this.sdSkip = 0;
@@ -41,6 +48,11 @@ class JobsController {
             };
 
         SERVICE.set(this, jobsService);
+        if(shareData.getProperty() == 'blank'){
+            this.initJobs();
+        } else {
+            this.getJobsDetail(this.userId, shareData.getProperty().flag, shareData.getProperty().status)
+        }
   }
 
     setStage(stage){
@@ -63,12 +75,6 @@ class JobsController {
         else
             this.selectedCandidate = null;
         this.candidateDetailsForJob(this.selectedJobDetail.jobId);
-
-        // this.checkedCandidateList = [];
-        // var leng = this.allCandidateDetail[this.presentStage].length;
-        // for(var i=0; i<leng; i++){
-        //     this.checkedCandidateList.push(false);
-        // }
     };
 
     checkAllCandidate(evt) {
@@ -87,10 +93,17 @@ class JobsController {
         this.checkedCandidateNum = 0;
         this.checkedCandidateListIds = [];
         var leng = this.allCandidateDetail[this.presentStage].length;
+
+        let tempCandidateIdSortedArray = [];
+        for(let j=0; j<leng; j++){
+            tempCandidateIdSortedArray.push(this.allCandidateDetail[this.presentStage][j].candidateId);
+        }
+        tempCandidateIdSortedArray.sort(function(a, b){return b-a});
+
         for(var i=0; i<leng; i++){
             if(this.checkedCandidateList[i] === true) {
                 this.checkedCandidateNum++;
-                this.checkedCandidateListIds.push(this.allCandidateDetail[this.presentStage][leng-1-i].candidateId);
+                this.checkedCandidateListIds.push(tempCandidateIdSortedArray[i]);
             }
         }
         if(this.checkedCandidateNum === 0){
@@ -233,12 +246,13 @@ class JobsController {
         }
     };
 
-    uploadResume(){
+    uploadResume(candidateId){
+        
         var file = this.resumeFile;
         if(file) {
             var fd = new FormData();
             fd.append('resumeFile', file);
-            fd.append('candidateId', this.selectedCandidate.candidateId);
+            fd.append('candidateId', candidateId);
             fd.append('uploadDate', new Date());
 
             SERVICE.get(this).uploadResumeFile(fd).then(response => {
@@ -247,12 +261,14 @@ class JobsController {
                     alert("Error occurred while uploading resume file.\nPlease select proper file type and size.");
                 this.resumeFile = null;
                 document.getElementById("file-input").value="";
+                document.getElementById("new-file-input2").value="";
             }, error => {
                     console.log(error);
             });
         } else {
             alert("Please select a file to upload!");
             document.getElementById("file-input").value="";
+            document.getElementById("new-file-input2").value="";
         }
 
     };
@@ -325,18 +341,18 @@ class JobsController {
         //TODO
     }
 
-    sendMessage(jobId) {
+    sendMessage(jobId, candidateId) {
         var reqData = {
             "jobId": jobId,
             "userId": this.userId,
-            "candidateId": this.selectedCandidate.candidateId,
+            "candidateId": candidateId,
             "timestamp": new Date(),
             "message": this.postMessage
             };
 
         SERVICE.get(this).sendMessage(reqData).then(response => {
             this.postMessage = "";
-            this.getFeedMsgThread(jobId);
+            this.getFeedMsgThread(jobId, candidateId);
         }, error => {
             this.postMessage = "";
         });
@@ -434,9 +450,9 @@ class JobsController {
         });
     };
 
-    getFeedMsgThread(jobId){
+    getFeedMsgThread(jobId, candidateId){
         this.feedMsgRecords = {};
-        SERVICE.get(this).feedMsgThreadData(jobId, this.selectedCandidate.candidateId).then(response => {
+        SERVICE.get(this).feedMsgThreadData(jobId, candidateId).then(response => {
             for(let i in response.TAGS){
                 response.TAGS[i].sentTo = (response.TAGS[i].sentTo).split(",").join(" @");
             }
@@ -492,8 +508,13 @@ class JobsController {
             this.allCandidateDetail = response.data;
             let leng = this.allCandidateDetail[this.presentStage].length;
             if(leng > 0) {
-                this.selectedCandidate = this.allCandidateDetail[this.presentStage][leng-1];
-                this.candidateDetailsFunction(this.allCandidateDetail[this.presentStage][leng-1].candidateId);
+                let maxCandidateIdPointer = 0;
+                for(let i=0; i<leng; i++){
+                    if(this.allCandidateDetail[this.presentStage][maxCandidateIdPointer].candidateId < this.allCandidateDetail[this.presentStage][i].candidateId)
+                        maxCandidateIdPointer = i;
+                }
+                this.selectedCandidate = this.allCandidateDetail[this.presentStage][maxCandidateIdPointer];
+                this.candidateDetailsFunction(this.allCandidateDetail[this.presentStage][maxCandidateIdPointer].candidateId);
 
                 for(var i=0; i<leng; i++){
                     this.checkedCandidateList.push(false);
@@ -515,7 +536,7 @@ class JobsController {
             }
         }
         this.presentStage = "NEW";
-        // this.getSimilarResumeStatistics(); //Implementation later
+        this.initSimilarResume(0);
         this.candidateDetailsForJob(jobId);
     };
 
@@ -535,12 +556,184 @@ class JobsController {
             
             this.sideMenuJobsDetails = response.data;
             this.sideMenuState.jobId = response.data[0].jobId;
-            this.getMainMenuData(this.sideMenuState.jobId);
+            if(this.shareData.getProperty() == 'blank'){
+                this.getMainMenuData(this.sideMenuState.jobId);
+            } else {
+                this.getMainMenuData(this.shareData.getProperty().jobId);
+                this.shareData.setProperty('blank')
+            }
             this.getAllRecruiters();
         }, error => {
             console.log(error);
         });
     };
+
+
+    initJobs() {
+        this.getJobsDetail(this.userId, 'myjob', 'active');
+    };
+
+    //Similar Resume Code: START
+    initSimilarResume(skip) {
+        let reqData = {
+            "jobId": this.selectedJobDetail.jobId,
+            "clientName": this.selectedJobDetail.clientName,
+            "designation": this.selectedJobDetail.designation,
+            "location": this.selectedJobDetail.location,
+            "minExp": this.selectedJobDetail.minExperience,
+            "maxExp": this.selectedJobDetail.maxExperience,
+            "maxCTC": this.selectedJobDetail.maxCTC,
+            "primarySkill": this.selectedJobDetail.primarySkills,
+            "skip": skip
+        };
+        
+        SERVICE.get(this).getInternalDataCandidateList(reqData).then(response => {
+            this.internalCandidateList = response.data;
+            this.internalCandidateListCount = response.count;
+
+            // Check candidate functionality
+            this.flagCheckAllIDCandidate = false;
+            this.checkIDCandidateList = [];
+            for(let i=0; i<this.internalCandidateList.length; i++){
+                this.checkIDCandidateList.push(false);
+            }
+            //Get candidate Details section data
+            if(this.internalCandidateList.length > 0){
+                this.internalDataCandidateDetailsFunction(this.internalCandidateList[0].candidateId);
+            }
+        }, error => {
+            console.log(error);
+        });
+    }
+    checkAllIDCandidate(){
+        this.checkIDCandidateList = [];
+        for(let i=0; i<this.internalCandidateList.length; i++){
+                this.checkIDCandidateList.push(this.flagCheckAllIDCandidate);
+            }
+    }
+    getSelectedIDCandidates() {
+        this.checkedIDCandidateNum = 0;
+        this.selectedIDCandidateIdArr = [];
+        let leng = this.internalCandidateList.length;
+        for(let i=0; i<leng; i++){  
+            if(this.checkIDCandidateList[i] === true){
+                this.checkedIDCandidateNum++;
+                this.selectedIDCandidateIdArr.push(this.internalCandidateList[i].candidateId);
+            }
+        }
+        if(this.checkedIDCandidateNum === 0){
+            alert("Please select atleast one candidate from the list");
+        }
+    }
+    moveIDCandidatesToActiveJob() {
+        let reqData = {
+            "userId": this.userId,
+            "jobId": this.selectedJobDetail.jobId,
+            "candidateId": this.selectedIDCandidateIdArr,
+        };
+    
+        SERVICE.get(this).moveToActiveJob(reqData).then(response => {
+            console.log(response);
+            this.checkAllIDCandidate();
+            this.getMainMenuData(this.selectedJobDetail.jobId);
+        }, error => {
+            console.log(error);
+        });
+    }
+    internalDataCandidateDetailsFunction(candidateId) {
+
+        SERVICE.get(this).getLinkedInLink(candidateId).then(response => {
+            this.iDataLinkedInLink = response.linkedinLink;
+        }, error => {
+                console.log(error);
+        });
+
+        SERVICE.get(this).getResumeMetadata(candidateId).then(response => {
+            this.iDataResumeFileMetadata = response;
+        }, error => {
+            console.log(error);
+        });
+
+        SERVICE.get(this).getCandidateDetails(candidateId).then(response => {
+            this.iDataCandidateDetails = response;
+            
+        }, error => {
+                console.log(error);
+        });
+
+        SERVICE.get(this).feedJobData(candidateId).then(response => {
+            this.iDataFeedJobRecords = response;
+        }, error => {
+            console.log(error);
+        });
+
+    };
+    saveIDCandidateDetails(candidateId) {
+        if(document.getElementById("editreadonly_hidden1").value == 0){
+            if((this.iDataCandidateDetails.email.indexOf("@") == -1) 
+                || (this.iDataCandidateDetails.email.indexOf(".") == -1 )
+                || (this.iDataCandidateDetails.email.lastIndexOf(".") < this.iDataCandidateDetails.email.indexOf("@")) 
+                || (this.iDataCandidateDetails.email.indexOf("@") != this.iDataCandidateDetails.email.lastIndexOf("@"))) {
+                    alert("Please enter valid email address!");
+
+                    $('#editreadonly1').html("<i class='fa fa-floppy-o' aria-hidden='true'></i>");
+                    $("#detailform1 :input").prop("disabled", false);
+                    $("#editreadonly_hidden1").val(1);
+            }
+            else if(this.iDataCandidateDetails.contact.length != 10){
+                alert("Please enter 10 digit contact number");
+
+                $('#editreadonly1').html("<i class='fa fa-floppy-o' aria-hidden='true'></i>");
+                $("#detailform1 :input").prop("disabled", false);
+                $("#editreadonly_hidden1").val(1);
+            }
+            else if((this.iDataCandidateDetails.candidateName != null) && (this.iDataCandidateDetails.email != null)
+             && (this.iDataCandidateDetails.experience != null) && (this.iDataCandidateDetails.ctcFixed != null)
+             && (this.iDataCandidateDetails.ctcVariable != null) && (this.iDataCandidateDetails.ctcEsops != null)
+             && (this.iDataCandidateDetails.eCTCFixed != null) && (this.iDataCandidateDetails.eCTCVariable != null)
+             && (this.iDataCandidateDetails.eCTCEsops != null)
+             && (this.iDataCandidateDetails.location != null)) {
+
+                let reqObject = Object.assign(this.iDataCandidateDetails);
+                reqObject.candidateId = candidateId;
+                console.log(reqObject);
+
+                SERVICE.get(this).saveCandidateDetails(reqObject).then(response => {
+                    console.log(response.message);
+                }, error => {
+                    console.log(error);
+                });
+            } else {
+
+                alert("Please enter required fields");
+
+                // $('#editreadonly1').html("<i class='fa fa-floppy-o' aria-hidden='true'></i>");
+                // $("#detailform1 :input").prop("disabled", false);
+                // $("#editreadonly_hidden1").val(1);
+            }
+           
+        }
+    }
+    //Similar Resume Code: END
+
+
+    // Mail Module starts here
+    sendMessage(jobId, candidateId) {
+        var reqData = {
+            "jobId": jobId,
+            "userId": this.userId,
+            "candidateId": candidateId,
+            "timestamp": new Date(),
+            "message": this.postMessage
+            };
+
+        SERVICE.get(this).sendMessage(reqData).then(response => {
+            this.postMessage = "";
+            this.getFeedMsgThread(jobId, candidateId);
+        }, error => {
+            this.postMessage = "";
+        });
+    }
 
     fetchMails(label){
         $('.inboxtable').show();
@@ -678,18 +871,18 @@ class JobsController {
         $('.openinbox').show();
         $('.inboxtable').hide();
         SERVICE.get(this).readMail(message).then(response=>{
+            console.log("------START----")
+            console.log(response.msg);
+            console.log("-----END-----")
+            this.inbox.message.attachments = response.attachments;
             $('.email-body').html(response.msg.html);
             // this.email.content = response.msg.html;
         }, error =>{
             console.log(error);
         });
     }
-
-    initJobs() {
-            this.getJobsDetail(this.userId, 'myjob', 'active');
-    };
 }
 
-JobsController.$inject = ['AuthFactory', 'jobsService']
+JobsController.$inject = ['$rootScope', 'AuthFactory', 'jobsService', 'shareData']
 
 export default JobsController;

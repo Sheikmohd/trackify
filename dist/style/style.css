@@ -863,7 +863,7 @@ ul {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url(../images/images/dropdown.png);
+    /*background-image: url(../images/images/dropdown.png);*/
     background-repeat: no-repeat;
     background-position: 96% center
 }
@@ -998,17 +998,17 @@ button {
 }
 
 .bg_ai {
-	background-image: url(../imagesimages//bg.png);
+	background-image: url(../img/images/bg.png);
 }
 
 .banner.header-banner {
-    background-image: url(../images/images/Bg_Image_Walkin.png);
+    background-image: url(../img/images/Bg_Image_Walkin.png);
 }
 .banner.benefits-bg {
-    background-image: url(../images/images/benefits-bg-01.jpg)
+    /*background-image: url(../images/images/benefits-bg-01.jpg)*/
 }
 .banner.contact-bg {
-    background-image: url(../images/images/contact-bg.jpg)
+    /*background-image: url(../images/images/contact-bg.jpg)*/
 }
 
 .header {
@@ -1251,7 +1251,7 @@ hr.style-eight:after {
 }
 
 .transparent_btn.gmail_btn:before {
-	content:url('../images/images/mail.png');
+	content:url('../img/images/mail.png');
 	right: 16px;
     top: 1px;
 	position:relative;
@@ -1267,7 +1267,7 @@ video {
     height: auto;
     z-index: -100;
     transform: translateX(-50%) translateY(-50%);
-    background: url('../media/Going-Places.jpg') no-repeat;
+    /*background: url('../public/media/Going-Places.jpg') no-repeat;*/
     background-size: cover;
     transition: 1s opacity;
 }
@@ -1437,19 +1437,19 @@ video {
     font-family: Roboto, sans-serif
 }
 .section-benefits .benefit-outter .mirror-icon {
-    background-image: url(../images/images/mirror-icon.png)
+    /*background-image: url(../images/images/mirror-icon.png)*/
 }
 .section-benefits .benefit-outter .hands-icon {
-    background-image: url(../images/images/hands-icon.png)
+    /*background-image: url(../images/images/hands-icon.png)*/
 }
 .section-benefits .benefit-outter .building-icon {
-    background-image: url(../images/images/building-icon.png)
+    /*background-image: url(../images/images/building-icon.png)*/
 }
 .section-benefits .benefit-outter .car-icon {
-    background-image: url(../images/images/car-icon.png)
+    /*background-image: url(../images/images/car-icon.png)*/
 }
 .section-benefits .benefit-outter .people-icon {
-    background-image: url(../images/images/people-icon.png)
+    /*background-image: url(../images/images/people-icon.png)*/
 }
 .section-benefits .benefit-outter:hover .big-circle,
 .section-benefits .benefit-outter:hover .small-circle {
@@ -1494,13 +1494,13 @@ video {
     transition: all .25s ease
 }
 .section-structure .structure-content .structure-icon.icon-01 {
-    background-image: url(../images/images/home-icon.png)
+    /*background-image: url(../images/images/home-icon.png)*/
 }
 .section-structure .structure-content .structure-icon.icon-02 {
-    background-image: url(../images/images/bariar-icon.png)
+    /*background-image: url(../images/images/bariar-icon.png)*/
 }
 .section-structure .structure-content .structure-icon.icon-03 {
-    background-image: url(../images/images/money-icon.png)
+    /*background-image: url(../images/images/money-icon.png)*/
 }
 .section-structure .structure-content .structure-txt {
     float: right;
@@ -1522,13 +1522,13 @@ video {
     background-color: #f57c57
 }
 .section-structure .structure-content:hover .structure-icon.icon-01 {
-    background-image: url(../images/images/home-icon-w.png)
+    /*background-image: url(../images/images/home-icon-w.png)*/
 }
 .section-structure .structure-content:hover .structure-icon.icon-02 {
-    background-image: url(../images/images/bariar-icon-w.png)
+    /*background-image: url(../images/images/bariar-icon-w.png)*/
 }
 .section-structure .structure-content:hover .structure-icon.icon-03 {
-    background-image: url(../images/images/money-icon-w.png)
+    /*background-image: url(../images/images/money-icon-w.png)*/
 }
 .section-testimonial {
     background-color: #f5f5f5;
@@ -1642,28 +1642,28 @@ footer .socail ul li a {
     background-repeat: no-repeat
 }
 footer .socail ul li a.facebook {
-    background-image: url(../images/images/facebook.png)
+    background-image: url(../img/images/facebook.png)
 }
 footer .socail ul li a.facebook:hover {
-    background-image: url(../images/images/facebook-hover.png)
+    background-image: url(../img/images/facebook-hover.png)
 }
 footer .socail ul li a.twitter {
-    background-image: url(../images/images/twitter.png)
+    background-image: url(../img/images/twitter.png)
 }
 footer .socail ul li a.twitter:hover {
-    background-image: url(../images/images/twitter-hover.png)
+    background-image: url(../img/images/twitter-hover.png)
 }
 footer .socail ul li a.instagram {
-    background-image: url(../images/images/instagram.png)
+    background-image: url(../img/images/instagram.png)
 }
 footer .socail ul li a.instagram:hover {
-    background-image: url(../images/images/instagram-hover.png)
+    background-image: url(../img/images/instagram-hover.png)
 }
 footer .socail ul li a.linkdin {
-    background-image: url(../images/images/linkdin.png)
+    background-image: url(../img/images/linkdin.png)
 }
 footer .socail ul li a.linkdin:hover {
-    background-image: url(../images/images/linkdin-hover.png)
+    background-image: url(../img/images/linkdin-hover.png)
 }
 #successModal .bootstrap-dialog-title {
     color: #00a804;
@@ -1958,7 +1958,7 @@ footer .socail ul li a.linkdin:hover {
     z-index: 1;
 	    padding-top: 6px;
 }
-}
+
 
 #Btn_Gmail button {
 	background-color: #4398e0;

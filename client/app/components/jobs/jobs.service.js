@@ -37,6 +37,10 @@ class jobsService {
         return HTTP.get(this).post("/api/jobs/moveToNextStage", requestData).then(result => result.data);
     }
 
+    moveToActiveJob(requestData) {
+        return HTTP.get(this).post("/api/jobs/moveToActiveJob", requestData).then(result => result.data);
+    }
+
     moveJobToInactive(requestData) {
         return HTTP.get(this).post("/api/jobs/moveToInactiveJob", requestData).then(result => result.data);
     }
@@ -79,15 +83,9 @@ class jobsService {
     getLinkedInLink(candidateId) {
         return HTTP.get(this).get(`/api/jobs/linkedinLink/${candidateId}`).then(result => result.data );
     }
-    // internalDataCount(jobId) {
-    //     return HTTP.get(this).get(`/api/jobs/internalDataCount/${jobId}`).then(result => result.data );
-    // }
-    // socialDataCount(jobId) {
-    //     return HTTP.get(this).get(`/api/jobs/socialDataCount/${jobId}`).then(result => result.data );
-    // }
-    // socialDataInJob(reqData) {
-    //     return HTTP.get(this).post('/api/jobs/socialData', reqData).then(result => result.data );
-    // }
+    getInternalDataCandidateList(reqObj) {
+        return HTTP.get(this).post("/api/jobs/internalDataCandidateList", reqObj).then(result => result.data );
+    }
 
     fetchMails(data){
         var url = "/api/mailer?label="+data.label;

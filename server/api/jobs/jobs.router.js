@@ -39,7 +39,7 @@ JobsRouter.post('/uploadResume', verifyUser, controller.uploadResume);
 
 JobsRouter.post('/uploadNewCandidateResume', verifyUser, controller.uploadNewCandidateResume);
 
-JobsRouter.get('/candidateDetails/:candidateId', controller.candidateDetails);
+JobsRouter.get('/candidateDetails/:candidateId', verifyUser, controller.candidateDetails);
 
 JobsRouter.post('/updateCandidateDetails', verifyUser, controller.updateCandidateDetails);
 
@@ -53,9 +53,7 @@ JobsRouter.get('/allRecruiters', verifyUser, controller.allRecruiters);
 
 JobsRouter.get('/linkedinLink/:candidateId', verifyUser, controller.linkedinLink);
 
-// Remaining APIs will go here
-JobsRouter.get('/internalData', verifyUser, controller.internalData);
-JobsRouter.post('/socialData', verifyUser, controller.socialData);
+JobsRouter.post('/internalDataCandidateList', controller.internalDataCandidateList);
 
 //Discarded APIs
 JobsRouter.all('/*', controller.invalidRequest);

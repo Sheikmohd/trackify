@@ -60,7 +60,7 @@ import config	from '../../config/config';
 //     }, next);
 // };
 
-var resumeFilesPath = path.join(__dirname, 'resume_files');
+var resumeFilesPath = path.join(__dirname, '../../resume_files');
 // Util functions
 function twoDigits(d) {
     if(0 <= d && d < 10) return "0" + d.toString();
@@ -77,7 +77,7 @@ export const getJobsDetail = function(req, res) {
     var userId = req.params.userId;
     var status = req.params.status === 'active' ? 1 : 0;
     var userOp = req.params.flag === 'myjob' ? '=' : '<>';
-    var query = "select j.JOB_ID as jobId,j.USER_ID as jobCreatedById,u.NAME as jobCreatedByName,j.CREATED_ON as dateCreated,j.CLIENT_ID as clientId, c.CLIENT_NAME as clientName, j.DESIGNATION as designation,j.MIN_EXP as minExperience, j.MAX_EXP as maxExperience,s.SKILL as primarySkills from job j,user u, client c, job_skills as s where j.USER_ID=u.USER_ID and j.CLIENT_ID=c.CLIENT_ID and j.PRIMARY_SKILL=s.JOB_SKILL_ID and j.USER_ID " + userOp + " '" + userId + "' and j.ACTIVE = " + status;
+    var query = "select j.JOB_ID as jobId,j.USER_ID as jobCreatedById,u.NAME as jobCreatedByName,j.CREATED_ON as dateCreated,j.CLIENT_ID as clientId, c.CLIENT_NAME as clientName, j.DESIGNATION as designation,j.MIN_EXP as minExperience, j.MAX_EXP as maxExperience,s.SKILL as primarySkills, j.MAX_CTC as maxCTC from job j, user u, client c, job_skills as s where j.USER_ID=u.USER_ID and j.CLIENT_ID=c.CLIENT_ID and j.PRIMARY_SKILL=s.JOB_SKILL_ID and j.USER_ID " + userOp + " '" + userId + "' and j.ACTIVE = " + status;
     db.query(query, function(error, results) {
         if (error) {
             console.log(error);
@@ -164,7 +164,7 @@ export const candidateDetailsForJob = function(req, res) {
             }
             query = query.substring(0, query.length - 1) + ")) or cj.STAGE <> 'SHORTLIST')";
         }
-        console.log(query);
+        
     } else if(filter.INTERVIEW.length === 4 && filterFrom === 'job'){
         var item1 = null;
         var item2 = null;
@@ -323,7 +323,7 @@ export const changeStatus = function(req, res) {
                 for(var i=0; i<affectedRows.length;i++) {
                     var date = (affectedRows[i].TIMESTAMP).toMysqlFormat();
                     var innerQuery = "insert into status_log(JOB_ID,CANDIDATE_ID,STAGE,STATUS,STATUS_INPUTS,RECRUITER_ID,TIMESTAMP) values('"+affectedRows[i].JOB_ID+"','"+affectedRows[i].CANDIDATE_ID+"','"+affectedRows[i].STAGE+"','"+affectedRows[i].STATUS+"','"+affectedRows[i].STATUS_INPUTS+"','"+affectedRows[i].RECRUITER_ID+"','"+date+"')";
-                    console.log(innerQuery);
+                    
                     db.query(innerQuery, function(error, result) {
                         if (error) {
                             console.log(error);
@@ -345,7 +345,7 @@ export const moveToNextStage = function(req, res) {
         query = query + "'" + candidateId + "',";
     }
     query = query.substring(0, query.length - 1) + ")";
-    console.log(query);
+    
     db.query(query, function(error, result) {
         if (error) {
             console.log(error);
@@ -390,7 +390,7 @@ export const getAllActiveJobs = function(req, res) {
                             if (error) {
                                 return callback(error);
                             }
-                            for (location of locations) {
+                            for (let location of locations) {
                                 result.location.push(location.LOCATION);
                             }
                             callback(null);
@@ -437,17 +437,31 @@ export const getSimilarJobs = function(req, res) {
 
 export const moveToActiveJob = function(req, res) {
 
-    var date = new Date(req.body.timestamp).toISOString().slice(0, 19).replace('T', ' ');
-
-    var query = "insert into candidate_job_mapping(JOB_ID,CANDIDATE_ID,RECRUITER_ID,TIMESTAMP,STAGE) values(" + req.body.jobId + "," + req.body.candidateId + "," + req.body.movedBy + ",'" + date + "','NEW')";
-    db.query(query, function(error, skills) {
-        if (error) {
-            console.log(error);
-            return res.status(400).send("ERROR");
+    var reqData = {
+        "jobId": req.body.jobId,
+        "candidateIds": req.body.candidateId,
+        "recruiterId": req.body.userId,
+    };
+    console.log(reqData.candidateIds);
+    
+    if(reqData.jobId && reqData.recruiterId && reqData.candidateIds && reqData.candidateIds.length > 0){
+        var date = new Date().toMysqlFormat();
+        var query = "insert into candidate_job_mapping(JOB_ID,CANDIDATE_ID,RECRUITER_ID,TIMESTAMP,STAGE, STATUS) values";
+        for(let i=0; i < reqData.candidateIds.length; i++){
+            query = query+"("+reqData.jobId+","+reqData.candidateIds[i]+","+reqData.recruiterId+",'"+date+"','NEW','NEW RESUME'),";
         }
-        res.json({ "message": "SUCCESS" });
-    });
+        query = query.substring(0, query.length-1);
 
+        db.query(query, function(error, skills) {
+            if (error) {
+                console.log(error);
+                return res.status(400).send("ERROR");
+            }
+            res.json({ "message": "SUCCESS" });
+        });
+    } else {
+        res.json({"message": "Bad request"});
+    }
 };
 
 export const moveToInactiveJob = function(req, res) {
@@ -513,7 +527,7 @@ export const uploadResume = function(req, res) {
             
             fs.rename(oldPath, newPath, function (err) {
                 if(err){
-                    console.log(error);
+                    console.log(err);
                     res.json({"message": "ERROR"});
                 } else {
                     
@@ -614,7 +628,7 @@ export const uploadNewCandidateResume = function(req, res){
 
 export const candidateDetails = function(req, res) {
 
-    var query = "select CANDIDATE_ID as candidateId,CANDIDATE_NAME as candidateName,EMAIL as email,PHONE_NO as contact,EXPERIENCE as experience,COMPANY_NAME as employer,CTC_FIXED as ctcFixed,CTC_VAR as ctcVariable,CTC_ESOPS as ctcEsops,ECTC_FIXED as eCTCFixed, ECTC_VAR as eCTCVariable, ECTC_ESOPS as eCTCEsops,NOTICE_PERIOD as noticePeriod,if(SERVING_NOTICE_PERIOD = 1,'true','false') as serveNotice,JOB_LOCATION as location from candidate where CANDIDATE_ID=" + req.params.candidateId;
+    var query = "select CANDIDATE_ID as candidateId,CANDIDATE_NAME as candidateName,EMAIL as email,PHONE_NO as contact,EXPERIENCE as experience,COMPANY_NAME as employer, COLLEGE as college, CTC_FIXED as ctcFixed,CTC_VAR as ctcVariable,CTC_ESOPS as ctcEsops,ECTC_FIXED as eCTCFixed, ECTC_VAR as eCTCVariable, ECTC_ESOPS as eCTCEsops,NOTICE_PERIOD as noticePeriod,if(SERVING_NOTICE_PERIOD = 1,'true','false') as serveNotice,JOB_LOCATION as location from candidate where CANDIDATE_ID=" + req.params.candidateId;
     db.query(query, function(error, data) {
         if (error) {
             console.log(error);
@@ -745,7 +759,7 @@ export const savePostMessage = function(req, res) {
 
 export const feedJobData = function(req, res) {
 
-    var candidateId = req.params.candidateId-0;
+    var candidateId = req.params.candidateId;
 
     async.parallel({
         currentJobs: function(callback) {
@@ -779,8 +793,8 @@ export const feedJobData = function(req, res) {
 
 export const getFeedThread = function(req, res) {
 
-    var jobId = parseInt(req.params.jobId);
-    var candidateId = parseInt(req.params.candidateId);
+    var jobId = req.params.jobId;
+    var candidateId = req.params.candidateId;
 
     async.parallel({
         TAGS: function(callback) {
@@ -853,13 +867,69 @@ export const linkedinLink = function(req, res) {
     });
 };
 
-export const internalData = function(req, res) {
-    res.json({ "message": "Internal Data API" });
+export const internalDataCandidateList = function(req, res) {
+
+    var reqData = {
+        jobId: req.body.jobId,
+        clientName: req.body.clientName,
+        designation: req.body.designation,
+        location: req.body.location,
+        minExp: req.body.minExp,
+        maxExp: req.body.maxExp,
+        maxCTC: req.body.maxCTC,
+        primarySkill: req.body.primarySkill,
+        skip: req.body.skip
+    };
+    
+    var query = "select JOB_SKILL_ID from job_skills where SKILL='"+reqData.primarySkill+"'";
+    
+    db.query(query, function(error, data) {
+        if (error) {
+            console.log(error);
+            return res.status(400).send("ERROR");
+        } else {
+            if(data.length != 1){
+                res.json({"message": "PRIMARY SKILL NOT FOUND"});
+            } else {
+                let skillId = data[0].JOB_SKILL_ID;
+                var query2 = "select c.CANDIDATE_ID as candidateId, c.CANDIDATE_NAME as candidateName, c.COMPANY_NAME as presentEmployer, c.COLLEGE as college from candidate c, candidate_job_mapping cjm, job j where j.JOB_ID=cjm.JOB_ID and c.CANDIDATE_ID=cjm.CANDIDATE_ID and j.PRIMARY_SKILL="+skillId+" and j.DESIGNATION='"+reqData.designation+"' and j.JOB_ID <> "+reqData.jobId+" and cjm.CANDIDATE_ID not in (select CANDIDATE_ID from candidate_job_mapping where JOB_ID = "+ reqData.jobId+")"+" and c.EXPERIENCE >= "+reqData.minExp+" and c.EXPERIENCE <= "+reqData.maxExp+ " and c.CTC_FIXED <="+ reqData.maxCTC;
+                
+                if(reqData.location.length > 0){
+                    query2 = query2+ " and c.JOB_LOCATION in (";
+                    for(let i=0; i<reqData.location.length; i++){
+                        query2 = query2+"'"+reqData.location[i]+"',";
+                    }
+                    query2 = query2.substring(0, query2.length-1)+")";
+                }
+                
+                db.query(query2, function(error, data2) {
+                    if (error) {
+                        console.log(error);
+                        return res.status(400).send("ERROR");
+                    } else {
+                        var resObj = {"count": data2.length};
+                        resObj.data = [];
+                        if(data2.length !=0 && reqData.skip >= data2.length) {
+                            res.send({"message": "SKIP LIMIT OUTBOUND"});
+                        } else {
+                            let ctr = 0;
+                            let initVar = (reqData.skip === 0) ? 0 : reqData.skip-1;
+                             for(let i=initVar; i<data2.length; i++){
+                                 resObj.data.push(data2[i]);
+                                 ctr++;
+                                 if(ctr === 50)
+                                    break;
+                             }
+                             console.log(resObj);
+                             res.json(resObj);
+                        } 
+                    }
+                });
+            }    
+        }   
+    });
 };
 
-export const socialData = function(req, res) {
-    res.json({ "message": "Social Data API" });
-};
 
 export const invalidRequest = function(req, res) {
     res.send({"message": "Invalid Request"});

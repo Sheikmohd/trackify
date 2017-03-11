@@ -9,11 +9,5 @@ module.exports = {
     user     : 'root',
     password : 'root123',
     database : 'trackify'
-  },
-  mailer:{
-    service: "gmail",
-    host: "smtp.gmail.com",
-    username:"team.lightbulbmoments",
-    password:"lightbulbmoments"
   }
 };

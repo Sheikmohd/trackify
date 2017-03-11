@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import multer from 'multer';
 
-var resumeFilePath = path.join(__dirname, 'resume_files');
+var resumeFilePath = path.join(__dirname, '../resume_files');
 
 if (!fs.existsSync(resumeFilePath)) {
     fs.mkdirSync(resumeFilePath);

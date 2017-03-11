@@ -33,6 +33,11 @@ export const retrieveUser = (req, res, next) => {
         return res.status(400).send({ message: 'User not found' });
       } else {
         req.user = user;
+        var token = req.header('Authorization').split(' ')[1];
+        req.user.token= jwt.decode(token, config.TOKEN_SECRET);
+        console.log("tokennnnnnnnnnnnnnnnn");
+        console.log(jwt.decode(token, config.TOKEN_SECRET));
+        console.log("00000000000000000000000000000000000000000000000000000000000")
         next();
       }
     }, next);

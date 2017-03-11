@@ -46,6 +46,9 @@ export const providers = [
     // Step 1. Exchange authorization code for access token.
     request.post(accessTokenUrl, { json: true, form: params }, function(err, response, token) {
       var accessToken = token.access_token;
+      console.log("---------- ACCESSSS--------------------------")
+      console.log(accessToken)
+      console.log("-------------------TOKEN-----------------")
       var headers = { Authorization: 'Bearer ' + accessToken };
 
       // Step 2. Retrieve profile information about the current user.

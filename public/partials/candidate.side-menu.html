@@ -1,0 +1,294 @@
+<div class="leftpanel">
+    <div class="leftpanelinner">
+
+
+        <ul class="nav nav-tabs nav-justified nav-sidebar nobottom">
+            <li class="tooltips active" data-toggle="tooltip" title="Jobs"><a data-toggle="tab" data-target="#mainmenu"><i class="fa fa-briefcase" aria-hidden="true"></i> Jobs</a></li>
+            <li ng-click="vm.fetchMailCount()" class="tooltips unread" data-toggle="tooltip" title="Mail"><a data-toggle="tab" data-target="#mailcontent1"><i class="fa fa-envelope" aria-hidden="true"></i> Mail</a></li>
+            <li class="tooltips unread" data-toggle="tooltip" title="Chat"><a data-toggle="tab" data-target="#contactmenu"><i class="fa fa-comments-o" aria-hidden="true"></i> Chat</a></li>
+        </ul>
+
+
+
+        <div class="tab-content">
+
+            <!-- ################# MAIN MENU ################### -->
+
+            <div class="tab-pane active" id="mainmenu">
+
+                <div style="margin: 10px 10px;">
+                    <!--<button type="button" class="btn btn-md btn-default active-jobs">Active Jobs</button>
+                    <button type="button" class="btn btn-md btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="javascript:;">Inactive Jobs</a></li>
+                    </ul>-->
+                    <select name="" id="act-inct-dpdwn" class="btn" 
+                    ng-change="vm.getJobsDetail(vm.userId, vm.sideMenuState.flag, vm.sideMenuState.status)" 
+                    ng-model="vm.sideMenuState.status" style="width: 100%">
+                        <option value="active" selected="true">Active Jobs</option>
+                        <option value="inactive">Inactive Jobs</option>
+                    </select>
+                </div><!-- btn-group -->
+
+                <ul class="nav nav-tabs nav-justified nav-sidebar nobottom" id="act-inact-menu">
+                    <li class="tooltips active" ng-click="vm.getJobsDetail(vm.userId, 'myjob', vm.sideMenuState.status)"><a data-toggle="tab" data-target="#myjob">My Jobs</a></li>
+                    <li class="tooltips unread" ng-click="vm.getJobsDetail(vm.userId, 'coljob', vm.sideMenuState.status)"><a data-toggle="tab" data-target="#colleaguesjob">Colleagues Jobs</a></li>
+                </ul>
+
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="myjob">
+                        <!--<h5 class="sidebar-title">Favorites</h5>-->
+                        <div class="btn-group mr5" style="margin: 10px 10px;">
+                            <a class="btn btn-success btn-xs btn-quirk width200" ui-sref="newjob" ><i class="fa fa-plus-circle"></i> <span>New Jobs</span></a>
+                        </div>
+
+
+                        <ul class="inbox-nav inbox-divider mainsidenav">
+                            <li ng-repeat="row in vm.sideMenuJobsDetails"
+                                ng-click="vm.navToJobModule(row.jobId)" onclick="resetSimilarResumeView()">
+                                <a href="javascript:;">
+                                    <span class="nav-text1" style="text-transform: capitalize;" ng-bind="row.clientName | lowercase"></span>
+                                    <span class="nav-text2" ng-bind="row.designation"></span> |
+                                    <span class="nav-text2" style="text-transform: capitalize;" ng-bind="row.primarySkills | lowercase"></span></a>
+                            </li>
+                        </ul>
+                    </div><!-- tab-pane -->
+
+
+
+                    <div class="tab-pane" id="colleaguesjob">
+                        <div class="input-group input-search-contact  mt10">
+                            <input class="form-control" placeholder="Search contact" type="text" ng-model="vm.searchColJobText">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                                        </span>
+                        </div>
+                        <ul class="inbox-nav inbox-divider mainsidenav">
+                            <li ng-repeat="row in vm.sideMenuJobsDetails | filter: vm.searchColJobText"
+                                    ng-click="vm.navToJobModule(row.jobId)">
+                                <a href="javascript:;">
+                                    <span class="nav-text1" style="text-transform: capitalize;" ng-bind="row.clientName | lowercase"></span>
+                                    <span class="nav-text2" ng-bind="row.designation"></span> |
+                                    <span class="nav-text2 custom-cap" ng-bind="row.primarySkills | lowercase"></span></a>
+                            </li>
+                        </ul>
+
+                    </div><!-- tab-pane -->
+                </div><!--End tab-content -->
+            </div><!-- tab-pane -->
+
+
+            <div class="tab-pane" id="mailcontent1">
+                <div class="mail-box">
+                    <aside class="sm-side">
+                        <div class="user-head" style="min-height: 51px;">
+                            <a class="inbox-avatar" href="javascript:;" style="width: 22px;">
+                                <img width="20"  src="img/user.jpg">
+                            </a>
+                            <div class="user-name">
+                                <h5 style="margin-top:0"><a href="#">Alireza Zare</a></h5>
+                                <span><a href="#">Info.Ali.Pci@Gmail.com</a></span>
+                            </div>
+                        </div>
+
+
+                        <div class="inbox-body">
+                            <a class="button8 btn btn-compose noleftmargin" id="compose_btn">Compose
+                            </a>
+                            <span ng-include src="'partials/job-new-resume(send-mails-compose).html'"></span>
+                        </div>
+                        <ul class="inbox-nav inbox-divider">
+                            <li ng-click="vm.inbox.INBOX=[];vm.fetchMails('INBOX')"  data-target="#mailslide">
+                                <a href="javascript:;" id="Inbox"><i class="fa fa-inbox"></i> Inbox <span class="label label-danger pull-right">{{vm.inbox.inboxCounter}}</span></a>                                
+                            </li>
+                            <li ng-click="vm.inbox.SENT=[];vm.fetchMails('SENT')" data-target="#mailslide">
+                                <a href="#"><i class="fa fa-envelope-o"></i> Sent Mail</a>
+                            </li>
+                            <li ng-click="vm.inbox.IMPORTANT=[];vm.fetchMails('IMPORTANT')" data-target="#mailslide">
+                                <a href="#"><i class="fa fa-bookmark-o"></i> Important</a>
+                            </li>
+                            <li ng-click="vm.inbox.DRAFT=[];vm.fetchMails('DRAFT')" data-target="#mailslide">
+                                <a href="#"><i class=" fa fa-external-link"></i> Drafts <span class="label label-info pull-right">{{vm.inbox.draftsCounter}}</span></a>
+                            </li>
+                            <li ng-click="vm.inbox.TRASH=[];vm.fetchMails('TRASH')" data-target="#mailslide">
+                                <a href="#"><i class=" fa fa-trash-o"></i> Trash</a>
+                            </li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- ######################## EMAIL MENU ##################### -->
+
+            <div class="tab-pane" id="emailmenu">
+
+                <h5 class="sidebar-title">Links</h5>
+                <ul class="nav nav-pills nav-stacked nav-quirk nav-mail">
+                    <li><a href="javascript:;"><i class="fa fa-tags"></i> <span>Link 1</span></a></li>
+                    <li><a href="javascript:;"><i class="fa fa-tags"></i> <span>Link 2</span></a></li>
+                    <li><a href="javascript:;"><i class="fa fa-tags"></i> <span>Link 3</span></a></li>
+                </ul>
+
+                <h5 class="sidebar-title">Tags</h5>
+                <ul class="nav nav-pills nav-stacked nav-quirk nav-label">
+                    <li><a href="#"><i class="fa fa-tags primary"></i> <span>Communication</span></a></li>
+                    <li><a href="#"><i class="fa fa-tags success"></i> <span>Updates</span></a></li>
+                    <li><a href="#"><i class="fa fa-tags warning"></i> <span>Promotions</span></a></li>
+                    <li><a href="#"><i class="fa fa-tags danger"></i> <span>Social</span></a></li>
+                </ul>
+            </div><!-- tab-pane -->
+
+            <!-- ################### CONTACT LIST ################### -->
+
+            <div class="tab-pane" id="contactmenu">
+                <div class="input-group input-search-contact  mt10">
+                    <input type="text" class="form-control" placeholder="Search contact">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                                </span>
+                </div>
+                <h5 class="sidebar-title">My Contacts</h5>
+                <ul class="media-list media-list-contacts">
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user1.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Christina R. Hill
+                                    <span class="badge pull-right chat-badge">10+</span>
+                                </h4>
+                                <span><i class="fa fa-phone"></i> 386-752-1860</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user2.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Floyd M. Romero
+                                    <span class="badge pull-right chat-badge">10+</span></h4>
+                                <span><i class="fa fa-mobile"></i> +1614-650-8281</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user3.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    Jennie S. Gray
+                                    <span class="badge pull-right chat-badge">3+</span>
+                                </h4>
+                                <span><i class="fa fa-phone"></i> 310-757-8444</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user4.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Alia J. Locher</h4>
+                                <span><i class="fa fa-mobile"></i> +1517-386-0059</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user5.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Nicholas T. Hinkle</h4>
+                                <span><i class="fa fa-skype"></i> nicholas.hinkle</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user6.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Jamie W. Bradford</h4>
+                                <span><i class="fa fa-phone"></i> 225-270-2425</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user7.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Pamela J. Stump</h4>
+                                <span><i class="fa fa-mobile"></i> +1773-879-2491</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user8.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Refugio C. Burgess</h4>
+                                <span><i class="fa fa-mobile"></i> +1660-627-7184</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user9.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Ashley T. Brewington</h4>
+                                <span><i class="fa fa-skype"></i> ashley.brewington</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media">
+                        <a href="#">
+                            <div class="media-left">
+                                <img class="media-object img-circle" src="img/photos/user10.png" alt="">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Roberta F. Horn</h4>
+                                <span><i class="fa fa-phone"></i> 716-630-0132</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div><!-- tab-pane -->
+
+            <!-- #################### SETTINGS ################### -->
+
+            <div class="tab-pane" id="settings">
+                <div class="sidebar-btn-wrapper mt10">
+                    <a href="" class="btn btn-danger btn-block">Compose</a>
+                </div>
+
+                <h5 class="sidebar-title">Mailboxes</h5>
+                <ul class="nav nav-pills nav-stacked nav-quirk nav-mail">
+                    <li><a href="#"><i class="fa fa-inbox"></i> <span>Inbox (3)</span></a></li>
+                    <li><a href="#"><i class="fa fa-pencil"></i> <span>Draft (2)</span></a></li>
+                    <li><a href="#"><i class="fa fa-paper-plane"></i> <span>Sent</span></a></li>
+                </ul>
+            </div><!-- tab-pane -->
+
+
+        </div><!-- tab-content -->
+
+    </div><!-- leftpanelinner -->
+</div><!-- leftpanel -->

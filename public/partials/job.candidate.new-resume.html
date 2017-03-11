@@ -1,0 +1,31 @@
+
+
+<div class="modal bounceIn animated" id="candidate-resume-upload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog width400">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title modal-heading text-center" id="myModalLabel">Upload Candidate's New Resume</h4>
+            </div>
+            <div class="modal-body text-left">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3"></label>
+                        <div class="col-sm-8">
+                            <input id="new-file-input2" type="file" file-model="vm.resumeFile" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 text-center mt10">
+                            <button class="btn btn-sm btn-success btn-quirk" data-dismiss="modal" ng-click="vm.uploadResume(vm.iDataCandidateDetails.candidateId)"><i class="fa fa-upload"></i>Upload</button>
+                        </div>
+                    </div><!-- form-group -->
+                    <div class="clear"></div>
+                </form>
+            </div>
+
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div><!-- modal -->
+
+

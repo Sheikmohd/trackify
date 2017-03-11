@@ -21,13 +21,6 @@ middleware(app);
 app.use('/api',	ApiRouter);
 app.use('/auth', AuthRouter);
 
-app.use('/compose-mail', (req, res) => {
-	res.sendFile(path.join(staticRoot+"partials", 'job-new-resume(send-mails-compose).html'));
-});
-
-app.use('/inbox', (req, res) => {
-	res.sendFile(path.join(staticRoot+"partials", 'job(mail-slide).html'));
-});
 app.get('/*', (req, res) => {
     res.sendFile(path.join(staticRoot, 'index.html'));
 });

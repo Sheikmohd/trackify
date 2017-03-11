@@ -16,20 +16,26 @@
 
             <div class="tab-pane active" id="mainmenu">
 
-                <div class="btn-group mr5" style="margin: 10px 10px;">
-                    <button type="button" class="btn btn-md btn-default active-jobs">Active Jobs</button>
+                <div style="margin: 10px 10px;">
+                    <!--<button type="button" class="btn btn-md btn-default active-jobs">Active Jobs</button>
                     <button type="button" class="btn btn-md btn-default dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="javascript:;">Inactive Jobs</a></li>
-                    </ul>
+                    </ul>-->
+                    <select name="" id="act-inct-dpdwn" class="btn" 
+                    ng-change="vm.getJobsDetail(vm.userId, vm.sideMenuState.flag, vm.sideMenuState.status)" 
+                    ng-model="vm.sideMenuState.status" style="width: 100%">
+                        <option value="active" selected="true">Active Jobs</option>
+                        <option value="inactive">Inactive Jobs</option>
+                    </select>
                 </div><!-- btn-group -->
 
-                <ul class="nav nav-tabs nav-justified nav-sidebar nobottom">
-                    <li class="tooltips active" ng-click="vm.getJobsDetail(vm.userId, 'myjob', vm.sideMenuState.status)"><a data-toggle="tab" data-target="#myjob">My Jobs</a></li>
-                    <li class="tooltips unread" ng-click="vm.getJobsDetail(vm.userId, 'coljob', vm.sideMenuState.status)"><a data-toggle="tab" data-target="#colleaguesjob">Colleagues Jobs</a></li>
+                <ul class="nav nav-tabs nav-justified nav-sidebar nobottom" id="act-inact-menu">
+                    <li class="tooltips" ng-class="{'active': (vm.sideMenuState.flag == 'myjob')}" ng-click="vm.getJobsDetail(vm.userId, 'myjob', vm.sideMenuState.status)"><a data-toggle="tab" data-target="#myjob">My Jobs</a></li>
+                    <li class="tooltips" ng-class="{'active': (vm.sideMenuState.flag != 'myjob')}" ng-click="vm.getJobsDetail(vm.userId, 'coljob', vm.sideMenuState.status)"><a data-toggle="tab" data-target="#colleaguesjob">Colleagues Jobs</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -43,7 +49,7 @@
 
                         <ul class="inbox-nav inbox-divider mainsidenav">
                             <li ng-repeat="row in vm.sideMenuJobsDetails"
-                                ng-click="vm.getMainMenuData(row.jobId)">
+                                ng-click="vm.getMainMenuData(row.jobId)" onclick="resetSimilarResumeView()">
                                 <a href="javascript:;">
                                     <span class="nav-text1" style="text-transform: capitalize;" ng-bind="row.clientName | lowercase"></span>
                                     <span class="nav-text2" ng-bind="row.designation"></span> |
@@ -56,16 +62,16 @@
 
                     <div class="tab-pane" id="colleaguesjob">
                         <div class="input-group input-search-contact  mt10">
-                            <input class="form-control" placeholder="Search contact" type="text">
+                            <input class="form-control" placeholder="Search contact" type="text" ng-model="vm.searchColJobText">
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
                                         </span>
                         </div>
                         <ul class="inbox-nav inbox-divider mainsidenav">
-                            <li ng-repeat="row in vm.sideMenuJobsDetails"
+                            <li ng-repeat="row in vm.sideMenuJobsDetails | filter: vm.searchColJobText"
                                     ng-click="vm.getMainMenuData(row.jobId)">
                                 <a href="javascript:;">
-                                    <span class="nav-text1 custom-cap" ng-bind="row.clientName | lowercase"></span>
+                                    <span class="nav-text1" style="text-transform: capitalize;" ng-bind="row.clientName | lowercase"></span>
                                     <span class="nav-text2" ng-bind="row.designation"></span> |
                                     <span class="nav-text2 custom-cap" ng-bind="row.primarySkills | lowercase"></span></a>
                             </li>
@@ -91,7 +97,7 @@
 
 
                         <div class="inbox-body">
-                            <a ng-click="vm.sayHello()" class="button8 btn btn-compose noleftmargin" id="compose_btn">Compose
+                            <a class="button8 btn btn-compose noleftmargin" id="compose_btn">Compose
                             </a>
                             <span ng-include src="'partials/job-new-resume(send-mails-compose).html'"></span>
                         </div>

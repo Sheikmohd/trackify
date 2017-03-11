@@ -11,7 +11,7 @@ var upload_path = 'C:\\Users\\VIMO\\Documents\\GitHub\\trackify\\dist\\util\\res
 const gmail = google.gmail('v1');
 // Temporary data, This must come from auth module.
 var credentials = { "web": { "client_id": "907704178698-cahcjcicbnkspv5m70qksticpbc5lp1v.apps.googleusercontent.com", "project_id": "tidy-jetty-160504", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://accounts.google.com/o/oauth2/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_secret": "d5ziyoDZPkifltaOIRwfBNwV", "redirect_uris": ["http://tarunsoni.com", "http://localhost.com"], "javascript_origins": ["http://tarunsoni.com", "http://localhost.com"] } }
-var access_token = {"access_token":"ya29.GlsFBBJj1atli5U4OKekDRQjHyes5-6A3gOcLvTWDqBOI8f3kAg8SXOV9uaH-WPMeZJuZX-gA181OaGoRK6dx3WEE3FfDxXx4AEUbAPEbia5bBGIRE9UE-0_Fvn8","refresh_token":"1/ucCNZD0_gNXTw-H7ddL8uJ5IkXXMkPXZBhAPFWIhCR181snt1uxD0aEh0yn2LDTS","token_type":"Bearer","expiry_date":1488743209041}
+var access_token = {"access_token":"ya29.GlsLBGmgC1atH-DNkqgAEd-v0XwZsI_xPkixA0Ec3omLM0zeQ_LTk-pGfj_f721xmfD7Te6kH8GzL-qx0l-4MI31mRSZ7hEnhvGrJ2cQLcPyUMOJMZH9vXvuY3y-","refresh_token":"1/A_i-oOHiKV3rg3YL1ztHzykpSZp2xtL32qQuawcEbH2Zk97WkV9vev-w7n0acwGS","token_type":"Bearer","expiry_date":1489207054167}
 // var access_token = {"access_token":"ya29.GlsGBO5xVLJm4ZrpKksJIR86HQK8vX_mSKNRW8fMmBGVncVoLsloz9idAumW1M6G181NBg5LYh77ALXCD8tAv0J7nF7lHyphUQW7pIqVHAfWHfYd3BJiMWcp2oQh","refresh_token":"1/1qjbgZ3M_QtzdP0Fb6-LAXgQjd0tyuSNka9VT-DnPlA","token_type":"Bearer","expiry_date":1488804234044}
 function authorize(callback) {
     var clientSecret = credentials.web.client_secret;
@@ -60,7 +60,7 @@ export const fetchMessages = function(request, callback) {
         }
         if(request.label == "client"){
             params.labelIds = "INBOX"
-            params.q = "{from:olacabs.com from:myntra.com}"
+            params.q = "{from:google.com}"
         }
         if(request.label == "search"){
             delete params.labelIds;

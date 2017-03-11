@@ -1,23 +1,24 @@
 import router			from 'express';
 import * as controller	from './mailer.controller';
 import upload from '../../util/multer';
+import {verifyUser}		from '../../auth/auth-util';
 
 const MailerRouter = router();
 
-MailerRouter.get('/counter', controller.counter);
+MailerRouter.get('/counter', verifyUser, controller.counter);
 MailerRouter.param('id', controller.params);
 
 MailerRouter.route('/')
-  .get(controller.get)
-  .post(controller.post);
+  .get(verifyUser, controller.get)
+  .post(verifyUser, controller.post);
 
 MailerRouter.route('/:id')
-  .get(controller.getOne)
-  .put(controller.put)
-  .delete(controller.del);
+  .get(verifyUser, controller.getOne)
+  .put(verifyUser, controller.put)
+  .delete(verifyUser, controller.del);
 
-MailerRouter.post('/uploadAttachment', controller.uploadAttachment);
-MailerRouter.post('/modify', controller.modify);
+MailerRouter.post('/uploadAttachment', verifyUser, controller.uploadAttachment);
+MailerRouter.post('/modify', verifyUser, controller.modify);
 
 
 export default MailerRouter;
